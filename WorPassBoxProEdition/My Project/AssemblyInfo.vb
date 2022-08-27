@@ -1,37 +1,39 @@
 ﻿Imports System.Resources
+
 Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
-' La información general de un ensamblado se controla mediante el siguiente 
-' conjunto de atributos. Cambie estos valores de atributo para modificar la información
-' asociada con un ensamblado.
+' General Information about an assembly is controlled through the following 
+' set of attributes. Change these attribute values to modify the information
+' associated with an assembly.
 
-' Revisar los valores de los atributos del ensamblado
+' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Protector de cuentas")>
-<Assembly: AssemblyDescription("Protector de cuentas")>
-<Assembly: AssemblyCompany("Worcome Studios")>
-<Assembly: AssemblyProduct("PassBox Pro")>
-<Assembly: AssemblyCopyright("Copyright © 2021 Worcome Studios. Algunos derechos reservados.")>
-<Assembly: AssemblyTrademark("Worcome Studios")>
+<Assembly: AssemblyTitle("Protector de Cuentas")> 
+<Assembly: AssemblyDescription("Protege tus Cuentas y Leelas cuando quieras")> 
+<Assembly: AssemblyCompany("Worcome Studios")> 
+<Assembly: AssemblyProduct("PassBoxProEdition")>
+<Assembly: AssemblyCopyright("Copyright © 2020 Worcome Studios. Todos los Derechos Reservados")>
+<Assembly: AssemblyTrademark("Worcome Studios")> 
 
-<Assembly: ComVisible(False)>
+<Assembly: ComVisible(False)> 
 
-'El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
-<Assembly: Guid("3ead6a78-7954-4274-b117-fff8b5603b09")>
+'The following GUID is for the ID of the typelib if this project is exposed to COM
+<Assembly: Guid("e36fbf99-2892-48a0-8a38-62684a26594b")>
 
-' La información de versión de un ensamblado consta de los cuatro valores siguientes:
+' Version information for an assembly consists of the following four values:
 '
-'      Versión principal
-'      Versión secundaria
-'      Número de compilación
-'      Revisión
+'      Major Version
+'      Minor Version 
+'      Build Number
+'      Revision
 '
-' Puede especificar todos los valores o utilizar los números de compilación y de revisión predeterminados
-' mediante el carácter '*', como se muestra a continuación:
-' <Assembly: AssemblyVersion("1.0.*")>
+' You can specify all the values or you can default the Build and Revision Numbers 
+' by using the '*' as shown below:
+' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("15.0.0.0")>
-<Assembly: AssemblyFileVersion("15.0.0.0")>
-<Assembly: NeutralResourcesLanguage("es")>
+<Assembly: AssemblyVersion("13.0.0.0")>
+<Assembly: AssemblyFileVersion("13.0.0.0")>
+
+<Assembly: NeutralResourcesLanguageAttribute("es")> 
