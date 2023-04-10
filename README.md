@@ -9,7 +9,11 @@ Hemos cesado nuestras operaciones el 23/08/2022, después de 7 años de servicio
 El código esta "tal cual", sin modificaciones y con los últimos commits, sin censuras.  
 Todo responde a "que nuestra memoria persista".
 
-## [Información](http://worcome.000webhostapp.com/AppsAssemblyInformation.html): Licencias y Uso
+## Información: Licencias y Uso
 Úsalo, guíate, aprende, examina. ¡Innova!
 
-### Con amor: [Worcome](http://worcome.000webhostapp.com/) (2016-2022)
+### Con amor: Worcome (2016-2022)
+
+#### Version No-Oficial 15.0.0.0
+Modded by [Crizacio](https://crizacio.com/)
+https://crz-labs.crizacio.com/

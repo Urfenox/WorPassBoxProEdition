@@ -1,4 +1,5 @@
-﻿Public Class Debugger
+﻿Imports Microsoft.Win32
+Public Class Debugger
     Dim AppFiles As String = "C:\Users\" & System.Environment.UserName & "\AppData\Local\Worcome_Studios\Commons\AppFiles"
     Dim DIRCommons As String = "C:\Users\" & System.Environment.UserName & "\PassBoxData"
     Dim parametros As String
@@ -9,16 +10,23 @@
     Public Login_CryptoKey As String = Nothing
     Public IsRegistered As String = "False"
     Public CurrentCategory As String = "Default"
+    Public Espanglish As String = "0"
+    Public OfflineMode As Boolean = False
+
+    Public SyncServer As String = "https://crz-labs.crizacio.com/WSS/AppAccounts/Accounts"
+    Public SyncServerPost As String = "https://crz-labs.crizacio.com/WSS/AppAccounts/uploadAccount.php"
 
     Public SessionShield As String = DIRCommons & "\Session.ses"
     Public PB_ENCFiles As String = DIRCommons & "\EncryptedFiles"
     Public PB_DENFiles As String = DIRCommons & "\DecryptedFiles"
     Public PB_UserFiles As String = DIRCommons
- 
+
     Private Sub Debugger_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         Try
             SaveUserData()
             SaveAppData()
+            SaveRegedit()
+            SaveMyRegedit()
             CryptoActions.OnClose()
             Threading.Thread.Sleep(500)
             My.Settings.Save()
@@ -32,6 +40,7 @@
 
     Private Sub Debugger_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         parametros = Microsoft.VisualBasic.Command
+        Me.Hide()
         'Try
         '    FileOpen(1, Application.ExecutablePath, OpenMode.Binary, OpenAccess.Read)
         '    Dim stub As String = Space(LOF(1))
@@ -70,6 +79,14 @@
         'End Try
         If My.Computer.FileSystem.FileExists(DIRUser_DBFile) = False Then
             IsRegistered = "False"
+            Dim myCurrentLanguage As InputLanguage = InputLanguage.CurrentInputLanguage
+            If myCurrentLanguage.Culture.EnglishName.Contains("Spanish") Then
+                Espanglish = "ESP"
+            ElseIf myCurrentLanguage.Culture.EnglishName.Contains("English") Then
+                Espanglish = "ENG"
+            Else
+                Espanglish = "ENG"
+            End If
         Else
             IsRegistered = "True"
         End If
@@ -91,6 +108,8 @@
             End If
             GetAppData()
             GetUserData()
+            GetRegedit()
+            GetMyRegedit()
             'ADVERTENCIA!: Si no el usuario deja de tener activada la opcion, de igual forma se podria acceder a  saltar el login debido
             '   a que el "enabled/disabled" no es almacenado en la DB.
             Try
@@ -123,13 +142,13 @@
         End Try
     End Sub
 
-#Region "ConfigAppFile"
+#Region "Base de Datos"
     Dim DIRUser_DBFile As String = DIRCommons & "\DB_user.dat"
     Dim DIRApp_DBFile As String = DIRCommons & "\DB_app.dat"
     'no esta guardando la DB del programa DBAPP (NI IDEA QUE ES ESTO XDN'T)
 
     'Podriamos agregar un sistema IniValue retrocompatible con versiones anteriores dejando el formato antiguo junto con el nuevo (ini)
-    '   esto crearia tener que actualizar los dos formatos del mismo archivo
+    '   esto crearia tener que actualizar los dos formatos del mismo archivo al mismo tiempo
     Sub GetUserData()
         Try
             Dim tempString As New TextBox
@@ -188,6 +207,48 @@
             Console.WriteLine("[Debugger@SaveAppData]Error: " & ex.Message)
         End Try
     End Sub
+
+    Dim myRegeditKey As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName & "\\SyncServer", True)
+    Sub SaveMyRegedit()
+        If myRegeditKey Is Nothing Then
+            Registry.CurrentUser.CreateSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName & "\\SyncServer")
+            myRegeditKey = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName & "\\SyncServer", True)
+        End If
+        Try
+            myRegeditKey.SetValue("SyncServer", CryptoActions.Encriptar(SyncServer, Login_CryptoKey), RegistryValueKind.String)
+            myRegeditKey.SetValue("SyncServerPost", CryptoActions.Encriptar(SyncServerPost, Login_CryptoKey), RegistryValueKind.String)
+            GetMyRegedit()
+        Catch
+        End Try
+    End Sub
+    Sub GetMyRegedit()
+        Try
+            SyncServer = CryptoActions.Desencriptar(myRegeditKey.GetValue("SyncServer"), Login_CryptoKey)
+            SyncServerPost = CryptoActions.Desencriptar(myRegeditKey.GetValue("SyncServerPost"), Login_CryptoKey)
+        Catch
+        End Try
+    End Sub
+
+    Dim RegeditKey As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName, True)
+    Sub SaveRegedit()
+        If RegeditKey Is Nothing Then
+            Registry.CurrentUser.CreateSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName)
+            RegeditKey = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName, True)
+        End If
+        Try
+            RegeditKey.SetValue("LANG", Espanglish, RegistryValueKind.String)
+            RegeditKey.SetValue("OfflineMode", OfflineMode, RegistryValueKind.String)
+            GetRegedit()
+        Catch
+        End Try
+    End Sub
+    Sub GetRegedit()
+        Try
+            Espanglish = RegeditKey.GetValue("LANG")
+            OfflineMode = Boolean.Parse(RegeditKey.GetValue("OfflineMode"))
+        Catch
+        End Try
+    End Sub
 #End Region
 
 #Region "PastAppFile"
@@ -195,19 +256,20 @@
     Dim SecureVersion As String
     Dim SecureBoolean As Boolean = My.Settings.OnlyMe
     Sub LoadPastAppFile()
-        If My.Settings.OnlyMe = True Then
-            If My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = False Then
-                My.Computer.FileSystem.WriteAllText(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE", "#Read modules and compares with the Original/Changed" & vbCrLf & "OnlyMe>" & SecureBoolean & vbCrLf & "Version>" & My.Application.Info.Version.ToString, False)
-                ReadPastAppFile()
-            ElseIf My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = True Then
-                ReadPastAppFile()
-            End If
-        ElseIf My.Settings.OnlyMe = False Then
-            If My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = True Then
-                My.Computer.FileSystem.DeleteFile(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE")
-                InicioComun()
-            End If
-        End If
+        InicioComun()
+        'If My.Settings.OnlyMe = True Then
+        '    If My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = False Then
+        '        My.Computer.FileSystem.WriteAllText(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE", "#Read modules and compares with the Original/Changed" & vbCrLf & "OnlyMe>" & SecureBoolean & vbCrLf & "Version>" & My.Application.Info.Version.ToString, False)
+        '        ReadPastAppFile()
+        '    ElseIf My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = True Then
+        '        ReadPastAppFile()
+        '    End If
+        'ElseIf My.Settings.OnlyMe = False Then
+        '    If My.Computer.FileSystem.FileExists(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE") = True Then
+        '        My.Computer.FileSystem.DeleteFile(AppFiles & "\" & My.Application.Info.AssemblyName & "PastAppFile_OnlyMe.WorCODE")
+        '        InicioComun()
+        '    End If
+        'End If
     End Sub
 
     Sub ReadPastAppFile()
@@ -231,8 +293,8 @@
 
     Sub InicioComun(Optional ByVal common As Boolean = True)
         Try
-            If My.Settings.OfflineMode = False Then
-                AppService.StartAppService(False, False, True, False, True)
+            If OfflineMode = False Then
+                AppService.StartAppService(False, False, True, True, True)
             End If
             Threading.Thread.Sleep(150)
         Catch ex As Exception
@@ -248,13 +310,8 @@
             If Login_AccountsCryptoKey = Nothing Then
                 CryptoActions.CreateDataBasePrivateKey()
             End If
-            Dim myCurrentLanguage As InputLanguage = InputLanguage.CurrentInputLanguage
-            If myCurrentLanguage.Culture.EnglishName.Contains("Spanish") Then
-                My.Settings.Espanglish = "ESP"
-            ElseIf myCurrentLanguage.Culture.EnglishName.Contains("English") Then
-                My.Settings.Espanglish = "ENG"
-            Else
-                My.Settings.Espanglish = "ENG"
+            If Espanglish = "0" Then
+                LangSelector.ShowDialog()
             End If
             My.Settings.Save()
             My.Settings.Reload()
@@ -273,9 +330,9 @@
         End Try
     End Sub
     Sub ApplyLang()
-        If My.Settings.Espanglish = "ESP" Then
+        If Espanglish = "ESP" Then
             Idioma.Español.LANG_Español()
-        ElseIf My.Settings.Espanglish = "ENG" Then
+        ElseIf Espanglish = "ENG" Then
             Idioma.Ingles.LANG_English()
         Else
             LangSelector.ShowDialog()
@@ -321,6 +378,11 @@
         My.Computer.FileSystem.WriteAllText(SessionShield, Nothing, False)
         SaveUserData()
         SaveAppData()
+        ''no necesario porque la categoria debe estar cerrada para poder subirla
+        'If CurrentCategory = "SyncServer" Then
+        'Else
+        '    CryptoActions.OnClose()
+        'End If
         CryptoActions.OnClose()
         Threading.Thread.Sleep(500)
         My.Settings.Save()
@@ -337,7 +399,7 @@
     End Sub
     Sub FactoryReset()
         Try
-            If MessageBox.Show("¿Realmente quieres hacer un FactoryReset a la Aplicacion?" & vbCrLf & "Do you really want to make a FactoryReset to the Application?" & vbCrLf & "Todo sera eliminado" & vbCrLf & "Everything will be eliminated", "Worcome Security", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = System.Windows.Forms.DialogResult.Yes Then
+            If MessageBox.Show("¿Desea hacer un reset?", "Worcome Security", MessageBoxButtons.YesNo, MessageBoxIcon.Information) = DialogResult.Yes Then
                 If InputBox("Escribe la Contraseña Previamente Registrada para Proceder con el 'FactoryReset'" & "Write the Previously Registered Password to Proceed with the 'FactoryReset'", "Worcome Security") = Login_Password Then
                     If InputBox("Escribe el Correo Previamente Registrado para Proceder con el 'FactoryReset'" & vbCrLf & "Write the Previously Registered Mail to Proceed with the 'FactoryReset", "Worcome Security") = Login_Email Then
                         IsRegistered = "False"
@@ -346,7 +408,7 @@
                         Login_Email = Nothing
                         Login_AccountsCryptoKey = Nothing
                         Login_CryptoKey = Nothing
-                        My.Settings.Espanglish = "0"
+                        Espanglish = "0"
                         SaveAppData()
                         SaveUserData()
                         CryptoActions.UnLockDirectory()
@@ -356,7 +418,11 @@
                         End If
                         My.Settings.Save()
                         My.Settings.Reload()
-                        MsgBox("Aplicacion Vuelta a la Version de Fabrica" & vbCrLf & "Application Return to the Factory Version" & vbCrLf & "Vuelva a Iniciar la Aplicacion" & vbCrLf & "Restart the Application", MsgBoxStyle.Information, "Worcome Security")
+                        Try
+                            Registry.CurrentUser.DeleteSubKey("Software\\Worcome_Studios\\" & My.Application.Info.AssemblyName)
+                        Catch ex As Exception
+                        End Try
+                        MsgBox("Reset completado", MsgBoxStyle.Information, "Worcome Security")
                         End
                     Else
                         End
@@ -365,7 +431,7 @@
                     End
                 End If
             Else
-                InicioComun()
+                End
             End If
         Catch ex As Exception
             Console.WriteLine("[Debugger@FactoryReset]Error: " & ex.Message)

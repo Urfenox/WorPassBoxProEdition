@@ -139,8 +139,8 @@ Partial Class PassBox
         '
         Me.Button1.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.Button1.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.Button1.Font = New System.Drawing.Font("Segoe UI Light", 15.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button1.Location = New System.Drawing.Point(6, 345)
+        Me.Button1.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button1.Location = New System.Drawing.Point(6, 355)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(280, 41)
         Me.Button1.TabIndex = 6
@@ -162,9 +162,9 @@ Partial Class PassBox
         Me.ServiceName.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.ServiceName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ServiceName.Location = New System.Drawing.Point(9, 36)
+        Me.ServiceName.Location = New System.Drawing.Point(14, 36)
         Me.ServiceName.Name = "ServiceName"
-        Me.ServiceName.Size = New System.Drawing.Size(277, 22)
+        Me.ServiceName.Size = New System.Drawing.Size(265, 22)
         Me.ServiceName.TabIndex = 1
         '
         'UserName
@@ -172,9 +172,9 @@ Partial Class PassBox
         Me.UserName.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.UserName.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.UserName.Location = New System.Drawing.Point(9, 91)
+        Me.UserName.Location = New System.Drawing.Point(14, 91)
         Me.UserName.Name = "UserName"
-        Me.UserName.Size = New System.Drawing.Size(277, 22)
+        Me.UserName.Size = New System.Drawing.Size(265, 22)
         Me.UserName.TabIndex = 2
         '
         'Label2
@@ -192,9 +192,9 @@ Partial Class PassBox
         Me.Correo.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Correo.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Correo.Location = New System.Drawing.Point(9, 146)
+        Me.Correo.Location = New System.Drawing.Point(14, 146)
         Me.Correo.Name = "Correo"
-        Me.Correo.Size = New System.Drawing.Size(277, 22)
+        Me.Correo.Size = New System.Drawing.Size(265, 22)
         Me.Correo.TabIndex = 3
         '
         'Label3
@@ -212,10 +212,10 @@ Partial Class PassBox
         Me.Password.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Password.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Password.Location = New System.Drawing.Point(9, 201)
+        Me.Password.Location = New System.Drawing.Point(14, 201)
         Me.Password.Name = "Password"
         Me.Password.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
-        Me.Password.Size = New System.Drawing.Size(227, 22)
+        Me.Password.Size = New System.Drawing.Size(222, 22)
         Me.Password.TabIndex = 4
         '
         'Label4
@@ -232,10 +232,10 @@ Partial Class PassBox
         '
         Me.Button2.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Button2.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.Button2.Font = New System.Drawing.Font("Segoe UI Light", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button2.Location = New System.Drawing.Point(12, 498)
+        Me.Button2.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button2.Location = New System.Drawing.Point(12, 503)
         Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(115, 31)
+        Me.Button2.Size = New System.Drawing.Size(115, 26)
         Me.Button2.TabIndex = 8
         Me.Button2.Text = "Buscar"
         Me.Button2.UseVisualStyleBackColor = True
@@ -244,10 +244,10 @@ Partial Class PassBox
         '
         Me.Button3.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Button3.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.Button3.Font = New System.Drawing.Font("Segoe UI Light", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button3.Location = New System.Drawing.Point(133, 498)
+        Me.Button3.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button3.Location = New System.Drawing.Point(133, 503)
         Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(120, 31)
+        Me.Button3.Size = New System.Drawing.Size(120, 26)
         Me.Button3.TabIndex = 9
         Me.Button3.Text = "Borrar Cuenta"
         Me.Button3.UseVisualStyleBackColor = True
@@ -272,20 +272,20 @@ Partial Class PassBox
         Me.GroupBox1.Controls.Add(Me.UserName)
         Me.GroupBox1.Controls.Add(Me.Correo)
         Me.GroupBox1.Controls.Add(Me.Label3)
-        Me.GroupBox1.Location = New System.Drawing.Point(380, 12)
+        Me.GroupBox1.Location = New System.Drawing.Point(380, 19)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(292, 431)
+        Me.GroupBox1.Size = New System.Drawing.Size(292, 441)
         Me.GroupBox1.TabIndex = 12
         Me.GroupBox1.TabStop = False
         '
         'Notas
         '
-        Me.Notas.Location = New System.Drawing.Point(9, 256)
+        Me.Notas.Location = New System.Drawing.Point(14, 256)
         Me.Notas.Multiline = True
         Me.Notas.Name = "Notas"
         Me.Notas.PasswordChar = Global.Microsoft.VisualBasic.ChrW(9679)
         Me.Notas.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
-        Me.Notas.Size = New System.Drawing.Size(277, 70)
+        Me.Notas.Size = New System.Drawing.Size(265, 80)
         Me.Notas.TabIndex = 5
         '
         'Label11
@@ -293,7 +293,7 @@ Partial Class PassBox
         Me.Label11.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label11.AutoSize = True
         Me.Label11.ForeColor = System.Drawing.Color.Gray
-        Me.Label11.Location = New System.Drawing.Point(244, 329)
+        Me.Label11.Location = New System.Drawing.Point(237, 339)
         Me.Label11.Name = "Label11"
         Me.Label11.Size = New System.Drawing.Size(42, 13)
         Me.Label11.TabIndex = 18
@@ -324,8 +324,8 @@ Partial Class PassBox
         '
         Me.Button6.Anchor = System.Windows.Forms.AnchorStyles.Bottom
         Me.Button6.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.Button6.Font = New System.Drawing.Font("Segoe UI Light", 13.25!)
-        Me.Button6.Location = New System.Drawing.Point(9, 392)
+        Me.Button6.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button6.Location = New System.Drawing.Point(9, 402)
         Me.Button6.Name = "Button6"
         Me.Button6.Size = New System.Drawing.Size(275, 33)
         Me.Button6.TabIndex = 7
@@ -349,7 +349,7 @@ Partial Class PassBox
         Me.Label6.AutoSize = True
         Me.Label6.Cursor = System.Windows.Forms.Cursors.Help
         Me.Label6.Font = New System.Drawing.Font("Segoe UI", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label6.Location = New System.Drawing.Point(380, 472)
+        Me.Label6.Location = New System.Drawing.Point(380, 482)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(40, 15)
         Me.Label6.TabIndex = 14
@@ -360,7 +360,7 @@ Partial Class PassBox
         Me.Label7.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Segoe UI", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(380, 446)
+        Me.Label7.Location = New System.Drawing.Point(379, 463)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(138, 17)
         Me.Label7.TabIndex = 13
@@ -381,10 +381,10 @@ Partial Class PassBox
         '
         Me.Button4.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Button4.Cursor = System.Windows.Forms.Cursors.Hand
-        Me.Button4.Font = New System.Drawing.Font("Segoe UI Light", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Button4.Location = New System.Drawing.Point(259, 498)
+        Me.Button4.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Button4.Location = New System.Drawing.Point(259, 503)
         Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(115, 31)
+        Me.Button4.Size = New System.Drawing.Size(115, 26)
         Me.Button4.TabIndex = 10
         Me.Button4.Text = "Categorias"
         Me.Button4.UseVisualStyleBackColor = True

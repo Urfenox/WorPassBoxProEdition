@@ -121,10 +121,6 @@
   <data name="Worcome Corp PLN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Worcome Corp PLN.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="VerifyKeyAccess" xml:space="preserve">
-    <value />
-    <comment>Codigo de Acceso</comment>
-  </data>
   <data name="STLogo_TextoNOBG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\STLogo_TextoNOBG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

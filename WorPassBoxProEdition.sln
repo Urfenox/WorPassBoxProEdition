@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1622
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WorPassBoxProEdition", "WorPassBoxProEdition\WorPassBoxProEdition.vbproj", "{D3668460-16E5-418F-887F-7BEAC8B0155A}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "WorPassBoxProEdition", "WorPassBoxProEdition\WorPassBoxProEdition.vbproj", "{1A6E951E-2AC6-437C-8094-C572228FFDA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D3668460-16E5-418F-887F-7BEAC8B0155A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3668460-16E5-418F-887F-7BEAC8B0155A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3668460-16E5-418F-887F-7BEAC8B0155A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3668460-16E5-418F-887F-7BEAC8B0155A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A6E951E-2AC6-437C-8094-C572228FFDA5}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{1A6E951E-2AC6-437C-8094-C572228FFDA5}.Release|Any CPU.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

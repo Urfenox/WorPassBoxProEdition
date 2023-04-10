@@ -1,5 +1,4 @@
 ﻿Imports System.IO
-
 Public Class Config
 
     Private Sub Config_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -8,10 +7,10 @@ Public Class Config
             TextBox1.Text = Debugger.Login_Username
             TextBox2.Text = Debugger.Login_Email
             TextBox3.Text = Debugger.Login_Password
-            If My.Settings.OfflineMode = False Then
-                CheckBox1.CheckState = CheckState.Checked
-            Else
+            If Debugger.OfflineMode = False Then
                 CheckBox1.CheckState = CheckState.Unchecked
+            Else
+                CheckBox1.CheckState = CheckState.Checked
             End If
             TabPage1.Visible = False
             TabPage1.Visible = False
@@ -36,15 +35,15 @@ Public Class Config
                 Debugger.Login_Email = TextBox2.Text
                 Debugger.Login_Password = TextBox3.Text
                 If CheckBox1.CheckState = CheckState.Checked Then
-                    My.Settings.OfflineMode = True
+                    Debugger.OfflineMode = True
                 Else
                     If MsgBox("¿Want to run a AppService instance?", MsgBoxStyle.YesNo, "Worcome Security") = MsgBoxResult.Yes Then
                         Try
-                            AppService.StartAppService(False, False, True, True, True) 'Offline, SecureMode, AppManager, SignAuthority (quitado), AppService
+                            AppService.StartAppService(False, False, True, True, True) 'Offline, SecureMode, AppManager, SignRegistry, AppService
                         Catch
                         End Try
                     End If
-                    My.Settings.OfflineMode = False
+                    Debugger.OfflineMode = False
                 End If
                 If DomainUpDown2.Text = "No" Then
                     My.Settings.OnlyMe = False
@@ -75,24 +74,24 @@ Public Class Config
                             Console.WriteLine("[Config@Button2_Click:Reset]Error: " & ex.Message)
                         End Try
                         Debugger.FactoryReset()
-                        If My.Settings.Espanglish = "ESP" Then
+                        If Debugger.Espanglish = "ESP" Then
                             MsgBox("El Programa fue Restaurado a la Version de Fabrica", MsgBoxStyle.Critical, "Worcome Security")
-                        ElseIf My.Settings.Espanglish = "ENG" Then
+                        ElseIf Debugger.Espanglish = "ENG" Then
                             MsgBox("The Program was Restored to the Factory Version", MsgBoxStyle.Critical, "Worcome Security")
                         End If
                         Debugger.Close()
                     Else
-                        If My.Settings.Espanglish = "ESP" Then
+                        If Debugger.Espanglish = "ESP" Then
                             MsgBox("El UserName Ingresado no Coincide con el Nombre de Usuario Previamente Registrado" & vbCrLf & "PassBox se Cerrara", MsgBoxStyle.Critical, "Worcome Security")
-                        ElseIf My.Settings.Espanglish = "ENG" Then
+                        ElseIf Debugger.Espanglish = "ENG" Then
                             MsgBox("The entered UserName does not match the Previously Registered User Name" & vbCrLf & "PassBox will be closed", MsgBoxStyle.Critical, "Worcome Security")
                         End If
                         End
                     End If
                 Else
-                    If My.Settings.Espanglish = "ESP" Then
+                    If Debugger.Espanglish = "ESP" Then
                         MsgBox("El Correo Ingresado no Coincide con el Correo Previamente Registrado" & "PassBox se Cerrara", MsgBoxStyle.Critical, "Worcome Security")
-                    ElseIf My.Settings.Espanglish = "ENG" Then
+                    ElseIf Debugger.Espanglish = "ENG" Then
                         MsgBox("Registered Mail Does Not Match Previously Registered Mail" & "PassBox Will Close", MsgBoxStyle.Critical, "Worcome Security")
                     End If
                     End
@@ -118,17 +117,17 @@ Public Class Config
         Dim TextBoxVirtualCryptoKey = InputBox("Ingrese una Llave Criptografica para la Base de Datos" & vbCrLf & "Enter a Cryptographic Key (Data Base)", "Worcome Security")
         Dim TextBoxVirtualAccountaCryptoKey = InputBox("Ingrese una Llave Criptografica para las Cuentas" & vbCrLf & "Enter a Cryptographic Key (Accounts)", "Worcome Security")
         If TextBoxVirtualCryptoKey = Nothing Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Rellene con la Informacion Solicitada", MsgBoxStyle.Critical, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Fill in the requested information", MsgBoxStyle.Critical, "Worcome Security")
             End If
             Exit Sub
         End If
         If TextBoxVirtualAccountaCryptoKey = Nothing Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Rellene con la Informacion Solicitada", MsgBoxStyle.Critical, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Fill in the requested information", MsgBoxStyle.Critical, "Worcome Security")
             End If
             Exit Sub
@@ -138,9 +137,9 @@ Public Class Config
         Debugger.SaveAppData()
         Debugger.SaveUserData()
         Threading.Thread.Sleep(50)
-        If My.Settings.Espanglish = "ESP" Then
+        If Debugger.Espanglish = "ESP" Then
             MsgBox("Llave Criptografica Agregada Correctamente!", MsgBoxStyle.Information, "Worcome Security")
-        ElseIf My.Settings.Espanglish = "ENG" Then
+        ElseIf Debugger.Espanglish = "ENG" Then
             MsgBox("Cryptographic Key Added Correctly!", MsgBoxStyle.Information, "Worcome Security")
         End If
         PassBox.Close()
@@ -153,9 +152,9 @@ Public Class Config
         Debugger.SaveAppData()
         Debugger.SaveUserData()
         Threading.Thread.Sleep(150)
-        If My.Settings.Espanglish = "ESP" Then
+        If Debugger.Espanglish = "ESP" Then
             MsgBox("Llaves Criptograficas Creadas" & vbCrLf & "PassBox se Cerrara", MsgBoxStyle.Information, "Worcome Security")
-        ElseIf My.Settings.Espanglish = "ENG" Then
+        ElseIf Debugger.Espanglish = "ENG" Then
             MsgBox("Cryptographic Keys Created" & vbCrLf & "PassBox Will Close", MsgBoxStyle.Information, "Worcome Security")
         End If
         PassBox.Close()
@@ -234,9 +233,5 @@ Public Class Config
                 End Try
             End If
         End If
-    End Sub
-
-    Private Sub CheckBox1_CheckedChanged(sender As Object, e As EventArgs) Handles CheckBox1.CheckedChanged
-
     End Sub
 End Class

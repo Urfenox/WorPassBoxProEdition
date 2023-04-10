@@ -10,11 +10,11 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("Protector de Cuentas")> 
-<Assembly: AssemblyDescription("Protege tus Cuentas y Leelas cuando quieras")> 
+<Assembly: AssemblyTitle("Protector de cuentas")>
+<Assembly: AssemblyDescription("Protector para cuentas")>
 <Assembly: AssemblyCompany("Worcome Studios")> 
 <Assembly: AssemblyProduct("PassBoxProEdition")>
-<Assembly: AssemblyCopyright("Copyright © 2020 Worcome Studios. Todos los Derechos Reservados")>
+<Assembly: AssemblyCopyright("Copyright © 2023 Worcome Studios. Todos los derechos reservados")>
 <Assembly: AssemblyTrademark("Worcome Studios")> 
 
 <Assembly: ComVisible(False)> 
@@ -33,7 +33,7 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("13.0.0.0")>
-<Assembly: AssemblyFileVersion("13.0.0.0")>
+<Assembly: AssemblyVersion("15.0.0.0")>
+<Assembly: AssemblyFileVersion("10.04.20.23")>
 
 <Assembly: NeutralResourcesLanguageAttribute("es")> 

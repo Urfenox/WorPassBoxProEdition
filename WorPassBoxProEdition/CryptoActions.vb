@@ -14,8 +14,8 @@ Public Class CryptoActions
     End Sub
 
     Sub OnLoadApp()
-        Try
-            For Each Fichero As String In PassBox.MemoryFile
+        For Each Fichero As String In PassBox.MemoryFile
+            Try
                 Dim tempString As String = Nothing
                 Dim NombreAleatorio As String = Fichero.ToString
                 Dim Cadena As String() = NombreAleatorio.Split(">")
@@ -27,15 +27,14 @@ Public Class CryptoActions
                 tempString = tempString.Remove(0, tempString.LastIndexOf("\") + 1)
                 CallDecrypt(PassBox.ENCFiles & "\" & RandomName, OriginalName, Desencriptar(Debugger.Login_AccountsCryptoKey, Debugger.Login_CryptoKey))
                 My.Computer.FileSystem.DeleteFile(PassBox.ENCFiles & "\" & RandomName)
-            Next
-        Catch ex As Exception
-            'Console.WriteLine("[LockDir@OnLoad]Error: " & ex.Message)
-        End Try
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Sub OnClose()
-        Try
-            For Each File As String In PassBox.MemoryFile
+        For Each File As String In PassBox.MemoryFile
+            Try
                 Dim tempString As String = Nothing
                 Dim NombreAleatorio As String = File.ToString
                 Dim Cadena As String() = NombreAleatorio.Split(">")
@@ -47,10 +46,9 @@ Public Class CryptoActions
                 tempString = tempString.Remove(0, tempString.LastIndexOf("\") + 1)
                 CallEncrypt(OriginalName, PassBox.ENCFiles & "\" & RandomName, Desencriptar(Debugger.Login_AccountsCryptoKey, Debugger.Login_CryptoKey))
                 My.Computer.FileSystem.DeleteFile(OriginalName)
-            Next
-        Catch ex As Exception
-            'Console.WriteLine("[LockDir@OnClose]Error: " & ex.Message)
-        End Try
+            Catch ex As Exception
+            End Try
+        Next
     End Sub
 
     Function CreateRandomName(ByVal RandomName As String)

@@ -39,7 +39,7 @@ Namespace My.Resources
         Friend ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
-                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("Wor_PassBox_PRO.Resources", GetType(Resources).Assembly)
+                    Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("WorPassBoxProEdition.Resources", GetType(Resources).Assembly)
                     resourceMan = temp
                 End If
                 Return resourceMan
@@ -67,15 +67,6 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("STLogo_TextoNOBG", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Busca una cadena traducida similar a .
-        '''</summary>
-        Friend ReadOnly Property VerifyKeyAccess() As String
-            Get
-                Return ResourceManager.GetString("VerifyKeyAccess", resourceCulture)
             End Get
         End Property
         

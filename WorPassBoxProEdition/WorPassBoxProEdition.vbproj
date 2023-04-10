@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -8,13 +8,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1A6E951E-2AC6-437C-8094-C572228FFDA5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Wor_PassBox_PRO.My.MyApplication</StartupObject>
-    <RootNamespace>Wor_PassBox_PRO</RootNamespace>
+    <StartupObject>WorPassBoxProEdition.My.MyApplication</StartupObject>
+    <RootNamespace>WorPassBoxProEdition</RootNamespace>
     <AssemblyName>WorPassBoxProEdition</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>C:\Users\Criz\Desktop\Wor PassBoxPRO\</PublishUrl>
     <Install>true</Install>
@@ -40,7 +41,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
@@ -48,6 +49,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>WorPassBoxProEdition.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -58,6 +60,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>WorPassBoxProEdition.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -102,6 +105,7 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineTrace>true</DefineTrace>
@@ -112,17 +116,20 @@
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -137,22 +144,29 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About.Designer.vb">
-      <DependentUpon>About.vb</DependentUpon>
-    </Compile>
-    <Compile Include="About.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ActionConfirm.Designer.vb">
       <DependentUpon>ActionConfirm.vb</DependentUpon>
     </Compile>
     <Compile Include="ActionConfirm.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="AppAbout.designer.vb">
+      <DependentUpon>AppAbout.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AppAbout.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="AppHelper.designer.vb">
       <DependentUpon>AppHelper.vb</DependentUpon>
     </Compile>
     <Compile Include="AppHelper.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="AppLicenser.designer.vb">
+      <DependentUpon>AppLicenser.vb</DependentUpon>
+    </Compile>
+    <Compile Include="AppLicenser.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="AppService.vb" />
@@ -227,6 +241,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ServerSync.Designer.vb">
+      <DependentUpon>ServerSync.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ServerSync.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="SignUp.Designer.vb">
       <DependentUpon>SignUp.vb</DependentUpon>
     </Compile>
@@ -241,14 +261,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="About.resx">
-      <DependentUpon>About.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ActionConfirm.resx">
       <DependentUpon>ActionConfirm.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AppAbout.resx">
+      <DependentUpon>AppAbout.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AppHelper.resx">
       <DependentUpon>AppHelper.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AppLicenser.resx">
+      <DependentUpon>AppLicenser.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AppSupport.resx">
       <DependentUpon>AppSupport.vb</DependentUpon>
@@ -282,6 +305,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ServerSync.resx">
+      <DependentUpon>ServerSync.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SignUp.resx">
       <DependentUpon>SignUp.vb</DependentUpon>

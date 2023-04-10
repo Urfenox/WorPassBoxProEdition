@@ -14,6 +14,12 @@ Public Class PassBox
     Public UserClose As Boolean = True
     Public CategoryList As New ArrayList
 
+    Private Sub PassBox_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        UserClose = True
+        Debugger.ApplyLang()
+        StartPassBox()
+    End Sub
+
     Private Sub PassBox_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
         Try
             Me.Hide()
@@ -22,9 +28,6 @@ Public Class PassBox
             End If
             If My.Computer.FileSystem.FileExists(UserFiles & "\FileList.WorCODE") = True Then
                 My.Computer.FileSystem.DeleteFile(UserFiles & "\FileList.WorCODE")
-            End If
-            If My.Computer.FileSystem.FileExists(SessionShield) = True Then
-                My.Computer.FileSystem.DeleteFile(SessionShield)
             End If
             Dim StringPassedFiles As String = Nothing
             For Each Items As String In MemoryFile
@@ -38,18 +41,15 @@ Public Class PassBox
                 StringPassedNames = StringPassedNames & Item & vbCrLf
             Next
             My.Computer.FileSystem.WriteAllText(UserFiles & "\FileNames.WorCODE", CryptoActions.Encriptar(StringPassedNames, CryptoActions.Desencriptar(Debugger.Login_AccountsCryptoKey, Debugger.Login_CryptoKey)), False)
+            If My.Computer.FileSystem.FileExists(SessionShield) = True Then
+                My.Computer.FileSystem.DeleteFile(SessionShield)
+            End If
         Catch ex As Exception
             'Console.WriteLine("[PassBox@PassBox_FormClosing]Error: " & ex.Message)
         End Try
         If UserClose = True Then
             Debugger.Close()
         End If
-    End Sub
-
-    Private Sub PassBox_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        UserClose = True
-        Debugger.ApplyLang()
-        StartPassBox()
     End Sub
 
     Sub StartPassBox()
@@ -88,24 +88,24 @@ Public Class PassBox
             End If
             CARGAR()
         Catch ex As Exception
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Error al Generar la Base", MsgBoxStyle.Critical, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Error Generating Base", MsgBoxStyle.Critical, "Worcome Security")
             End If
         End Try
-        If My.Settings.Espanglish = "ESP" Then
+        If Debugger.Espanglish = "ESP" Then
             Label12.Text = "Categoría: " & Debugger.CurrentCategory
-        ElseIf My.Settings.Espanglish = "ENG" Then
+        ElseIf Debugger.Espanglish = "ENG" Then
             Label12.Text = "Category: " & Debugger.CurrentCategory
         End If
     End Sub
 
     Private Sub btGuardarCuenta_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
         If ServiceName.Text = Nothing Or Correo.Text = Nothing Or Password.Text = Nothing Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Rellena con la información solicitada", MsgBoxStyle.Critical, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Fill with the requested information", MsgBoxStyle.Critical, "Worcome Security")
             End If
         Else
@@ -223,9 +223,9 @@ Public Class PassBox
                 End If
             Next
             If ENCONTRADO = False Then
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     MsgBox("No se pudo encontrar", MsgBoxStyle.Critical, "Worcome Security")
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     MsgBox("Could not be found", MsgBoxStyle.Critical, "Worcome Security")
                 End If
             End If
@@ -258,9 +258,9 @@ Public Class PassBox
                     Catch ex As Exception
                     End Try
                     CARGAR()
-                    If My.Settings.Espanglish = "ESP" Then
+                    If Debugger.Espanglish = "ESP" Then
                         MsgBox("Información eliminada correctamente", MsgBoxStyle.Information, "Worcome Security")
-                    ElseIf My.Settings.Espanglish = "ENG" Then
+                    ElseIf Debugger.Espanglish = "ENG" Then
                         MsgBox("Information successfully deleted", MsgBoxStyle.Information, "Worcome Security")
                     End If
                     LIMPIA()
@@ -286,9 +286,9 @@ Public Class PassBox
                     Catch ex As Exception
                     End Try
                     CARGAR()
-                    If My.Settings.Espanglish = "ESP" Then
+                    If Debugger.Espanglish = "ESP" Then
                         MsgBox("Información eliminada correctamente", MsgBoxStyle.Information, "Worcome Security")
-                    ElseIf My.Settings.Espanglish = "ENG" Then
+                    ElseIf Debugger.Espanglish = "ENG" Then
                         MsgBox("Information successfully deleted", MsgBoxStyle.Information, "Worcome Security")
                     End If
                     LIMPIA()
@@ -304,23 +304,24 @@ Public Class PassBox
     Private Sub Label5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label5.Click
         If Password.PasswordChar = "●" Then
             Password.PasswordChar = ""
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label5.Text = "Ocultar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label5.Text = "Hide"
             End If
         Else
             Password.PasswordChar = "●"
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label5.Text = "Mostrar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label5.Text = "Show"
             End If
         End If
     End Sub
 
     Private Sub Label6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label6.Click
-        About.Show()
+        AppAbout.Show()
+        AppAbout.Focus()
     End Sub
 
     Private Sub Label7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label7.Click
@@ -388,9 +389,9 @@ Public Class PassBox
 
     Private Sub Notas_TextChanged(sender As Object, e As EventArgs) Handles Notas.TextChanged
         If Notas.Text.Contains("<") Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Ciertos caracteres no están permitidos", MsgBoxStyle.Information, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Certain characters are not allowed", MsgBoxStyle.Information, "Worcome Security")
             End If
         ElseIf Notas.Text.Contains("UserName>") Or Notas.Text.Contains("Password>") Then
@@ -401,9 +402,9 @@ Public Class PassBox
 
     Private Sub ServiceName_TextChanged(sender As Object, e As EventArgs) Handles ServiceName.TextChanged
         If ServiceName.Text.Contains(">") Or ServiceName.Text.Contains("\") Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Ciertos caracteres no están permitidos", MsgBoxStyle.Information, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Certain characters are not allowed", MsgBoxStyle.Information, "Worcome Security")
             End If
             ServiceName.Text = ServiceName.Text.Replace(">", Nothing)
@@ -413,9 +414,9 @@ Public Class PassBox
 
     Private Sub UserName_TextChanged(sender As Object, e As EventArgs) Handles UserName.TextChanged
         If UserName.Text.Contains(">") Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Ciertos caracteres no están permitidos", MsgBoxStyle.Information, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Certain characters are not allowed", MsgBoxStyle.Information, "Worcome Security")
             End If
             UserName.Text = UserName.Text.Replace(">", Nothing)
@@ -424,9 +425,9 @@ Public Class PassBox
 
     Private Sub Correo_TextChanged(sender As Object, e As EventArgs) Handles Correo.TextChanged
         If Correo.Text.Contains(">") Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Ciertos caracteres no están permitidos", MsgBoxStyle.Information, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Certain characters are not allowed", MsgBoxStyle.Information, "Worcome Security")
             End If
         End If
@@ -435,9 +436,9 @@ Public Class PassBox
 
     Private Sub Password_TextChanged(sender As Object, e As EventArgs) Handles Password.TextChanged
         If Password.Text.Contains(">") Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Ciertos caracteres no están permitidos", MsgBoxStyle.Information, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Certain characters are not allowed", MsgBoxStyle.Information, "Worcome Security")
             End If
         End If
@@ -447,16 +448,16 @@ Public Class PassBox
     Private Sub Label11_Click(sender As Object, e As EventArgs) Handles Label11.Click
         If Notas.PasswordChar = "●" Then
             Notas.PasswordChar = ""
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label11.Text = "Ocultar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label11.Text = "Hide"
             End If
         Else
             Notas.PasswordChar = "●"
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label11.Text = "Mostrar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label11.Text = "Show"
             End If
         End If
@@ -470,9 +471,13 @@ Public Class PassBox
                 If POSICIONF < POSICIONI Then
                     MemoryFile.Insert(POSICIONF, MemoryFile(POSICIONI))
                     MemoryFile.RemoveAt(POSICIONI + 1)
+                    MemoryFileNames.Insert(POSICIONF, MemoryFileNames(POSICIONI))
+                    MemoryFileNames.RemoveAt(POSICIONI + 1)
                 Else
                     MemoryFile.Insert(POSICIONF + 1, MemoryFile(POSICIONI))
                     MemoryFile.RemoveAt(POSICIONI)
+                    MemoryFileNames.Insert(POSICIONF + 1, MemoryFileNames(POSICIONI))
+                    MemoryFileNames.RemoveAt(POSICIONI)
                 End If
                 HelloWorld.Items.Clear()
                 For Each ELEMENTO In MemoryFile
@@ -519,16 +524,16 @@ Public Class PassBox
 
     Private Sub ActivarModoConcentradoToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ActivarModoConcentradoToolStripMenuItem.Click
         If TopMost = False Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 ActivarModoConcentradoToolStripMenuItem.Text = "Desactivar modo concentrado"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 ActivarModoConcentradoToolStripMenuItem.Text = "Disable focus mode"
             End If
             TopMost = True
         Else
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 ActivarModoConcentradoToolStripMenuItem.Text = "Activar modo concentrado"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 ActivarModoConcentradoToolStripMenuItem.Text = "Enable focus mode"
             End If
             TopMost = False

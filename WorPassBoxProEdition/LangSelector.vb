@@ -11,13 +11,12 @@
         Else
             If ComboBox1.SelectedItem = "Español (España)" Then
                 Idioma.Español.LANG_Español()
-                My.Settings.Espanglish = "ESP"
+                Debugger.Espanglish = "ESP"
             ElseIf ComboBox1.SelectedItem = "English (Unites States)" Then
                 Idioma.Ingles.LANG_English()
-                My.Settings.Espanglish = "ENG"
+                Debugger.Espanglish = "ENG"
             End If
-            My.Settings.Save()
-            My.Settings.Reload()
+            Debugger.SaveRegedit()
             btnClicked = True
             Me.Close()
         End If
@@ -26,9 +25,8 @@
     Private Sub LangSelector_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         If btnClicked = False Then
             Idioma.Ingles.LANG_English()
-            My.Settings.Espanglish = "ENG"
-            My.Settings.Save()
-            My.Settings.Reload()
+            Debugger.Espanglish = "ENG"
+            Debugger.SaveRegedit()
         End If
     End Sub
 End Class

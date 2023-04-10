@@ -1,416 +1,37 @@
-﻿Imports System.Runtime.InteropServices
+﻿Imports System.ComponentModel
+Imports System.Runtime.InteropServices
 Imports System.Text
-Imports System.ComponentModel
-Module AppService
-    ReadOnly DIRCommons As String = "C:\Users\" & System.Environment.UserName & "\AppData\Local\Worcome_Studios\Commons"
-    ReadOnly DIRAppManager As String = DIRCommons & "\AppManager"
-    ReadOnly DIRKeyManager As String = DIRAppManager & "\KeyManager"
-    ReadOnly DirAppPatch As String = Application.ExecutablePath
-    Public ReadOnly ServerSwitchURLs = {"http://worcomecorporations.000webhostapp.com/Source/WSS/WSS_ServerSwitch.ini",
-                    "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/WSS_ServerSwitch.ini",
-                    "http://worcomestudios.comule.com/Recursos/InfoData/WSS_ServerSwitch.ini",
-                    "https://www.dropbox.com/s/9ktiht78g0n9v0y/WSS_ServerSwitch.ini?dl=1",
-                    "https://docs.google.com/uc?export=download&id=1ztBhx9ROXfHTBknpAyJk49S3P0EeypOA"}
-    'sera que por cada arranque elige un enlace de la lista (+1)?
+Imports Microsoft.Win32
+Module WorSupport
+    Public ReadOnly DIRCommons As String = "C:\Users\" & System.Environment.UserName & "\AppData\Local\Worcome_Studios\Commons"
+    Public ReadOnly DIRAppService As String = DIRCommons & "\AppService"
+    Public ReadOnly DIRServerSwitch As String = DIRAppService & "\ServerSwitch"
+    Public ReadOnly DirAppPath As String = Application.ExecutablePath
 
-    Public ReadOnly ServerSwitchFileURL As String = ServerSwitchURLs(0)
+    Public ReadOnly WorSupportVersion As String = "1.2.2.0"
+    Public ReadOnly WorSupportCompilate As String = "21.10.20.21"
 
-    Public AssemblyNameThis As String = My.Application.Info.AssemblyName
-    Public AssemblyVersionThis As String = My.Application.Info.Version.ToString
-    Public AssemblyProductNameThis As String = My.Application.Info.ProductName
+    Public WorSupportIsActived As Boolean = True 'DE ESTAR EN False, NO SE PODRA UTILIZAR NINGUN COMPLEMENTO DE WorSupport.
+    Public AppServiceSuccess As Boolean = False
+    Public ServerSwitchSuccess As Boolean = False
+    Public SignRegistrySuccess As Boolean = False
+    Public AppStatusSuccess As Boolean = False
 
-    Public OfflineApp As Boolean
-    Public SecureMode As Boolean
-    Dim AppManager As Boolean
-    Dim SignAutority As Boolean
-    Dim AppServiceStatus As Boolean
+    Public AppServiceFilePath As String = DIRAppService & "\" & ThisAssemblyName & ".ini"
+    Public ServerSwitchFilePath As String = DIRServerSwitch & "\[" & ThisAssemblyName & "]WSS_ServerSwitch.ini"
+    Public ServerConfigurationFilePath As String = DIRServerSwitch & "\[" & ThisAssemblyName & "]WSS_Configuration.ini"
 
-#Region "AppService Vars"
-    'AppService
-    Public Assembly_Status As String
-    Public Assembly_Name As String
-    Public Assembly_Version As String 'Si la version del servidor coincide con '*.*.*.*' entonces no se hara verificacion de versiones
-    Public Runtime_URL As String
-    Public Runtime_MSG As String
-    Public Runtime_ArgumentLine As String
-    Public Runtime_Command As String
-    Public Updates_Critical As String
-    Public Updates_CriticalMessage As String
-    Public Updates_RAW_Download As String
-    Public Updates_Download As String
-    Public Installer_Status As String
-    Public Installer_DownloadFrom As String
-#End Region
+    Public ThisAssemblyName As String = My.Application.Info.AssemblyName
+    Public ThisAssemblyVersion As String = My.Application.Info.Version.ToString
+    Public ThisAssemblyProductName As String = My.Application.Info.ProductName
 
-    Public IdiomaApp As String = "ENG"
-
-    Public CSS1 As Boolean = False
-    Public CSS2 As Boolean = False
-    Public AMC As Boolean = False
-    Public AAP As Boolean = False
-
-#Region "ServerSwitch Vars"
-    'ServerSwitch
-    Public UsingServer As String = "WS1"
-    Dim ServerStatus As String = Nothing
-    Dim ServerMSG As String = Nothing
-    Dim ServerURL As String = Nothing
-    Dim ServerArgumentLine As String = Nothing
-    Dim ServerCommand As String = Nothing
-    Dim URLs_Update As String = Nothing
-    Public CurrentServerURL As String = "http://worcomestudios.comule.com"
-    Public URL_KeyAccessToken As String = "http://worcomestudios.comule.com/Recursos/InfoData/KeyAccessToken.WorCODE"
-    Public URL_AppService As String = "http://worcomestudios.comule.com/Recursos/InfoData/WorAppServices"
-    Public URL_AppUpdate As String = "http://worcomestudios.comule.com/Recursos/InfoData/Updates"
-    Public URL_AppUpdate_WhatsNew As String = "http://worcomestudios.comule.com/Recursos/InfoData/WhatsNew"
-    Public URL_AppHelper_Help As String = "http://worcomestudios.comule.com/Recursos/AppHelper"
-    Public URL_AppHelper_About As String = "http://worcomestudios.comule.com/Recursos/AppHelper/AboutApps"
-    Public URL_Support_Post As String = "http://worcomestudios.comule.com/Recursos/WorCommunity/soporte.php"
-    Public URL_Telemetry_Post As String = "http://worcomestudios.comule.com/Recursos/InfoData/TelemetryPost.php"
-    Public URL_Download_Updater As String = "http://worcomestudios.comule.com/Recursos/InfoData/Updates/Updater.zip"
-
-#End Region
-
-    Dim WithEvents DownloaderArrayServerSwitch As New Net.WebClient
-    Dim WithEvents DownloaderArrayAppService As New Net.WebClient
-    Dim DownloadURIServerSwitch As Uri
-    Dim DownloadURIAppService As Uri
-
-    Sub StartAppService(ByVal OffLineApp_SAS As Boolean, ByVal SecureModeSAS As Boolean, ByVal AppManager_SAS As Boolean, ByVal SignAutority_SAS As Boolean, ByVal AppServiceStatus_SAS As Boolean, Optional ByVal AssemblyName As String = Nothing, Optional ByVal AssemblyVersion As String = Nothing)
-        Dim myCurrentLanguage As InputLanguage = InputLanguage.CurrentInputLanguage
-        If myCurrentLanguage.Culture.EnglishName.Contains("Spanish") Then
-            IdiomaApp = "ESP"
-        ElseIf myCurrentLanguage.Culture.EnglishName.Contains("English") Then
-            IdiomaApp = "ENG"
-        Else
-            IdiomaApp = "ENG"
-        End If
-        If AssemblyName IsNot Nothing And AssemblyVersion IsNot Nothing Then
-            AssemblyNameThis = AssemblyName
-            AssemblyVersionThis = AssemblyVersion
-            AssemblyProductNameThis = AssemblyNameThis.Replace("Wor", Nothing)
-        End If
-        'If MsgBox("¿Desea ejecutar una instancia de AppService?", MsgBoxStyle.YesNo, "Worcome Security") = MsgBoxResult.Yes Then
-        '    Try
-        '        AppService.StartAppService(False, False, True, True, True) 'Offline, SecureMode, AppManager, SignAuthority (quitado), AppService
-        '    Catch
-        '    End Try
-        'End If
-        Console.WriteLine("[StartAppService]Iniciado en: " & vbCrLf & "   Offline Mode: " & OffLineApp_SAS & vbCrLf & "   Secure Mode: " & SecureModeSAS & vbCrLf & "   AppManager: " & AppManager_SAS & vbCrLf & "   SignAutority: " & SignAutority_SAS & vbCrLf & "   AppService: " & AppServiceStatus_SAS)
-        OfflineApp = OffLineApp_SAS
-        SecureMode = SecureModeSAS
-        AppManager = AppManager_SAS
-        SignAutority = SignAutority_SAS
-        AppServiceStatus = AppServiceStatus_SAS
-        If SecureMode = True Then
-            If My.Computer.Network.IsAvailable = False Then
-                MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
-                End 'END_PROGRAM
-            End If
-        End If
-        Try
-            If My.Computer.FileSystem.DirectoryExists(DIRCommons) = False Then
-                My.Computer.FileSystem.CreateDirectory(DIRCommons)
-            End If
-            If My.Computer.FileSystem.DirectoryExists(DIRAppManager) = False Then
-                My.Computer.FileSystem.CreateDirectory(DIRAppManager)
-            End If
-        Catch ex As Exception
-        End Try
-        If My.Computer.FileSystem.FileExists(DIRCommons & "\[" & AssemblyNameThis & "]Status_WSS.ini") = True Then
-            My.Computer.FileSystem.DeleteFile(DIRCommons & "\[" & AssemblyNameThis & "]Status_WSS.ini")
-        End If
-        If OffLineApp_SAS = False Then
-            DownloadURIServerSwitch = New Uri(ServerSwitchFileURL)
-            DownloaderArrayServerSwitch.DownloadFileAsync(DownloadURIServerSwitch, DIRCommons & "\[" & AssemblyNameThis & "]Status_WSS.ini")
-        Else
-            Console.WriteLine("'AppService' Omitido")
-        End If
-    End Sub
-
-    Private Sub DownloaderArrayServerSwitch_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles DownloaderArrayServerSwitch.DownloadFileCompleted
-        ClueChangeServer(OfflineApp, SecureMode, AppManager, SignAutority, AppServiceStatus)
-    End Sub
-
-    Sub ClueChangeServer(ByVal OffLineApp_CCS As Boolean, ByVal SecureMode_CCS As Boolean, ByVal AppManager_CCS As Boolean, ByVal SignAutority_CCS As Boolean, ByVal AppServiceStatus_CCS As Boolean)
-        Try
-            Dim SwitchFilePath As String = DIRCommons & "\[" & AssemblyNameThis & "]Status_WSS.ini"
-            UsingServer = GetIniValue("WSS", "UsingServer", SwitchFilePath)
-            ServerStatus = GetIniValue("WSS", "ServerStatus", SwitchFilePath)
-            ServerMSG = GetIniValue("WSS", "Message", SwitchFilePath)
-            ServerURL = GetIniValue("WSS", "URL", SwitchFilePath)
-            ServerArgumentLine = GetIniValue("WSS", "ArgumentLine", SwitchFilePath)
-            ServerCommand = GetIniValue("WSS", "Command", SwitchFilePath)
-            URLs_Update = GetIniValue("ServerSwitch", "URL_Update", SwitchFilePath)
-            CurrentServerURL = GetIniValue("ServerSwitch", "CurrentServerURL", SwitchFilePath)
-            URL_KeyAccessToken = GetIniValue("ServerSwitch", "URL_KeyAccessToken", SwitchFilePath)
-            URL_AppService = GetIniValue("ServerSwitch", "URL_AppService", SwitchFilePath)
-            URL_AppUpdate = GetIniValue("ServerSwitch", "URL_AppUpdate", SwitchFilePath)
-            URL_AppUpdate_WhatsNew = GetIniValue("ServerSwitch", "URL_AppUpdate_WhatsNew", SwitchFilePath)
-            URL_AppHelper_Help = GetIniValue("ServerSwitch", "URL_AppHelper_Help", SwitchFilePath)
-            URL_AppHelper_About = GetIniValue("ServerSwitch", "URL_AppHelper_About", SwitchFilePath)
-            URL_Support_Post = GetIniValue("ServerSwitch", "URL_AppSupport_Post", SwitchFilePath)
-            URL_Telemetry_Post = GetIniValue("ServerSwitch", "URL_Telemetry_Post", SwitchFilePath)
-            URL_Download_Updater = GetIniValue("ServerSwitch", "URL_Download_Updater", SwitchFilePath)
-            If ServerStatus = "Stopped" Then
-                If SecureMode = True Then
-                    MsgBox("The Worcome Server are not working." & vbCrLf & "Try it later", MsgBoxStyle.Critical, "Worcome Security")
-                    If ServerMSG = "None" Then
-                    Else
-                        MsgBox("Worcome Server Services" & vbCrLf & ServerMSG, MsgBoxStyle.Information, "Worcome Security")
-                    End If
-                    End 'END_PROGRAM
-                End If
-            Else
-                If ServerMSG = "None" Then
-                Else
-                    MsgBox("Worcome Server Services" & vbCrLf & ServerMSG, MsgBoxStyle.Information, "Worcome Security")
-                End If
-                If ServerURL = "None" Then
-                Else
-                    Process.Start(ServerURL)
-                End If
-                If ServerArgumentLine = "None" Then
-                Else
-                    Process.Start(DirAppPatch, ServerArgumentLine)
-                End If
-                If ServerCommand = "None" Then
-                Else
-                    Process.Start(ServerCommand)
-                End If
-            End If
-            Console.WriteLine("[AppService]Using Server: " & UsingServer)
-            CSS1 = True
-        Catch ex As Exception
-            Console.WriteLine("[AppService@ServerSwitch:AnalizeInformation]Error: " & ex.Message)
-            If SecureMode_CCS = True Then
-                If My.Computer.Network.IsAvailable = False Then
-                    MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
-                Else
-                    MsgBox("No se pudo conectar a los Servidores de Servicios de Worcome", MsgBoxStyle.Critical, "Worcome Security")
-                End If
-                End 'END_PROGRAM
-            End If
-        End Try
-        Try
-            If URLs_Update = "No" Then
-                If UsingServer = "WS1" Then
-                    CurrentServerURL = "http://worcomestudios.comule.com"
-                    URL_KeyAccessToken = "http://worcomestudios.comule.com/Recursos/InfoData/KeyAccessToken.WorCODE"
-                    URL_AppService = "http://worcomestudios.comule.com/Recursos/InfoData/WorAppServices"
-                    URL_AppUpdate = "http://worcomestudios.comule.com/Recursos/InfoData/Updates"
-                    URL_AppUpdate_WhatsNew = "http://worcomestudios.comule.com/Recursos/InfoData/WhatsNew"
-                    URL_AppHelper_Help = "http://worcomestudios.comule.com/Recursos/AppHelper"
-                    URL_AppHelper_About = "http://worcomestudios.comule.com/Recursos/AppHelper/AboutApps"
-                    URL_Support_Post = "http://worcomestudios.comule.com/Recursos/WorCommunity/soporte.php"
-                    URL_Telemetry_Post = "http://worcomestudios.comule.com/Recursos/InfoData/TelemetryPost.php"
-                ElseIf UsingServer = "WS2" Then
-                    CurrentServerURL = "http://worcomestudios.mywebcommunity.org"
-                    URL_KeyAccessToken = "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/KeyAccessToken.WorCODE"
-                    URL_AppService = "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/WorAppServices"
-                    URL_AppUpdate = "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/Updates"
-                    URL_AppUpdate_WhatsNew = "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/WhatsNew"
-                    URL_AppHelper_Help = "http://worcomestudios.mywebcommunity.org/Recursos/AppHelper"
-                    URL_AppHelper_About = "http://worcomestudios.mywebcommunity.org/Recursos/AppHelper/AboutApps"
-                    URL_Support_Post = "http://worcomestudios.mywebcommunity.org/Recursos/WorCommunity/soporte.php"
-                    URL_Telemetry_Post = "http://worcomestudios.mywebcommunity.org/Recursos/WSS_Source/TelemetryPost.php"
-                ElseIf UsingServer = "WS3" Then
-                    CurrentServerURL = "http://worcomecorporations.000webhostapp.com"
-                    URL_KeyAccessToken = "http://worcomecorporations.000webhostapp.com/Source/WSS/KeyAccessToken.WorCODE"
-                    URL_AppService = "http://worcomecorporations.000webhostapp.com/Source/WSS/WorAppServices"
-                    URL_AppUpdate = "http://worcomecorporations.000webhostapp.com/Source/WSS/Updates"
-                    URL_AppUpdate_WhatsNew = "http://worcomecorporations.000webhostapp.com/Source/WSS/WhatsNew"
-                    URL_AppHelper_Help = "http://worcomecorporations.000webhostapp.com/Source/WSS/AppHelper"
-                    URL_AppHelper_About = "http://worcomecorporations.000webhostapp.com/Source/WSS/AppHelper/AboutApps"
-                    URL_Support_Post = "http://worcomecorporations.000webhostapp.com/Source/WSS/soporte.php"
-                    URL_Telemetry_Post = "http://worcomecorporations.000webhostapp.com/Source/WSS/TelemetryPost.php"
-                End If
-                Console.WriteLine("[AppService]Ahora estara utilizando el servidor '" & UsingServer & "'")
-            End If
-            CSS2 = True
-        Catch ex As Exception
-            Console.WriteLine("[AppService@ServerSwitch:ActionInformation]Error: " & ex.Message)
-        End Try
-        AppManagerCompatibility(OffLineApp_CCS, SecureMode_CCS, AppManager_CCS, SignAutority_CCS, AppServiceStatus_CCS)
-    End Sub
-
-    Sub AppManagerCompatibility(ByVal OffLineApp_AMC As Boolean, ByVal SecureMode_AMC As Boolean, ByVal AppManager_AMC As Boolean, ByVal SignAutority_AMC As Boolean, ByVal AppServiceStatus_AMC As Boolean)
-        If AppManager_AMC = False Then
-            Console.WriteLine("[AppService]'AppManagerCompatibility' Omitido")
-            AppServiceStatusStack(OffLineApp_AMC, SecureMode_AMC, AppServiceStatus_AMC)
-        Else
-            Try
-                If My.Computer.FileSystem.DirectoryExists(DIRAppManager) = False Then
-                    My.Computer.FileSystem.CreateDirectory(DIRAppManager)
-                ElseIf My.Computer.FileSystem.DirectoryExists(DIRAppManager) = True Then
-                    If My.Computer.FileSystem.FileExists(DIRAppManager & "\" & AssemblyNameThis & ".WorCODE") = False Then
-                        My.Computer.FileSystem.WriteAllText(DIRAppManager & "\" & AssemblyNameThis & ".WorCODE",
-                                                            "AssemblyName>" & AssemblyNameThis &
-                                                            vbCrLf & "ProductName>" & AssemblyProductNameThis &
-                                                            vbCrLf & "Description>" & My.Application.Info.Description &
-                                                            vbCr & "Version>" & AssemblyVersionThis &
-                                                            vbCrLf & "Patch>" & DirAppPatch, False)
-                        AMC = True
-                    ElseIf My.Computer.FileSystem.FileExists(DIRAppManager & "\" & AssemblyNameThis & ".WorCODE") = True Then
-                        My.Computer.FileSystem.DeleteFile(DIRAppManager & "\" & AssemblyNameThis & ".WorCODE")
-                        My.Computer.FileSystem.WriteAllText(DIRAppManager & "\" & AssemblyNameThis & ".WorCODE",
-                                                            "AssemblyName>" & AssemblyNameThis &
-                                                            vbCrLf & "ProductName>" & AssemblyProductNameThis &
-                                                            vbCrLf & "Description>" & My.Application.Info.Description &
-                                                            vbCr & "Version>" & AssemblyVersionThis &
-                                                            vbCrLf & "Patch>" & DirAppPatch, False)
-                        AMC = True
-                    End If
-                End If
-            Catch ex As Exception
-                Console.WriteLine("[AppService][AppManager Compatibility]Error: " & ex.Message)
-            End Try
-            AppServiceStatusStack(OffLineApp_AMC, SecureMode_AMC, AppServiceStatus_AMC)
-        End If
-    End Sub
-
-    Sub AppServiceStatusStack(ByVal OffLineApp_ASS As Boolean, ByVal SecureMode_ASS As Boolean, ByVal AppServiceStatus_ASS As Boolean)
-        If My.Computer.FileSystem.FileExists(DIRCommons & "\WorAppService_" & AssemblyNameThis & ".ini") Then
-            My.Computer.FileSystem.DeleteFile(DIRCommons & "\WorAppService_" & AssemblyNameThis & ".ini")
-        End If
-        If AppServiceStatus_ASS = False Then
-            Console.WriteLine("[AppService]'AppServiceStatus' Omitido")
-            If OffLineApp_ASS = False Then
-                Console.WriteLine("[AppService]Aplicacion en Linea")
-                DownloadURIAppService = New Uri(URL_AppService & "/Wor_Services___" & AssemblyProductNameThis & ".WorCODE")
-                DownloaderArrayAppService.DownloadFileAsync(DownloadURIAppService, DIRCommons & "\WorAppService_" & AssemblyNameThis & ".ini")
-            Else
-                Console.WriteLine("[AppService]Aplicacion fuera de Linea")
-            End If
-        Else
-            DownloadURIAppService = New Uri(URL_AppService & "/Wor_Services___" & AssemblyProductNameThis & ".WorCODE")
-            DownloaderArrayAppService.DownloadFileAsync(DownloadURIAppService, DIRCommons & "\WorAppService_" & AssemblyNameThis & ".ini")
-        End If
-    End Sub
-
-    Private Sub DownloaderArrayAppService_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles DownloaderArrayAppService.DownloadFileCompleted
-        ApplyAppService(OfflineApp, SecureMode, AppServiceStatus)
-    End Sub
-
-    Sub ApplyAppService(ByVal OffLineApp_AAS As Boolean, ByVal SecureMode_AAS As Boolean, ByVal AppServiceStatus_AAS As Boolean)
-        Try
-            Dim ServiceFilePath As String = DIRCommons & "\WorAppService_" & AssemblyNameThis & ".ini"
-            Assembly_Status = GetIniValue("Assembly", "Status", ServiceFilePath)
-            Assembly_Name = GetIniValue("Assembly", "Name", ServiceFilePath)
-            Assembly_Version = GetIniValue("Assembly", "Version", ServiceFilePath)
-            Runtime_URL = GetIniValue("Runtime", "URL", ServiceFilePath)
-            Runtime_MSG = GetIniValue("Runtime", "MSG", ServiceFilePath)
-            Runtime_ArgumentLine = GetIniValue("Runtime", "ArgumentLine", ServiceFilePath)
-            Runtime_Command = GetIniValue("Runtime", "Command", ServiceFilePath)
-            Updates_Critical = GetIniValue("Updates", "Critical", ServiceFilePath)
-            Updates_CriticalMessage = GetIniValue("Updates", "CriticalMessage", ServiceFilePath)
-            Updates_RAW_Download = GetIniValue("Updates", "RAW_Download", ServiceFilePath)
-            Updates_Download = GetIniValue("Updates", "Download", ServiceFilePath)
-            Installer_Status = GetIniValue("Installer", "Status", ServiceFilePath)
-            Installer_DownloadFrom = GetIniValue("Installer", "DownloadFrom", ServiceFilePath)
-            If Assembly_Name = AssemblyNameThis = True Then
-                If Runtime_URL = "None" Then
-                    Console.WriteLine("[AppService]Sin URL para Ejecutar")
-                Else
-                    Process.Start(Runtime_URL)
-                    Console.WriteLine("[AppService]URL Ejecutada: " & Runtime_URL)
-                End If
-                If Runtime_MSG = "None" Then
-                    Console.WriteLine("[AppService]Sin Mensajes para Ejecutar")
-                Else
-                    MsgBox(Runtime_MSG, MsgBoxStyle.Information, "Worcome Security")
-                    Console.WriteLine("[AppService]Mensaje Ejecutado: " & Runtime_MSG)
-                End If
-                If Runtime_ArgumentLine = "None" Then
-                    Console.WriteLine("[AppService]Sin Argumentos para Iniciar")
-                Else
-                    Process.Start(DirAppPatch, Runtime_ArgumentLine)
-                    Console.WriteLine("[AppService]Argumento Iniciado: " & Runtime_Command)
-                End If
-                If Runtime_Command = "None" Then
-                    Console.WriteLine("[AppService]Sin Comandos para Ejecutar")
-                Else
-                    Process.Start(Runtime_Command)
-                    Console.WriteLine("[AppService]Comando Ejecutado: " & Runtime_Command)
-                End If
-                'COMPROBACION DE CUAL VERSION ES MAYOR O INFERIOR A OTRA ENTRE LOCAL Y SERVIDOR
-                If Assembly_Version = "*.*.*.*" Then
-                    Console.WriteLine("[AppService]Comprobacion de version omitida.")
-                Else
-                    Dim vL As String = AssemblyVersionThis
-                    Dim vS As String = Assembly_Version
-                    Dim version1 = New Version(vL)
-                    Dim version2 = New Version(vS)
-                    Dim result = version1.CompareTo(version2)
-                    If (result > 0) Then
-                        'MsgBox("Actualmente está corriendo una versión superior a la del servidor", MsgBoxStyle.Information, "Worcome Security")
-                        Console.WriteLine("[AppService]La version actual esta sobre-actualizada")
-                    ElseIf (result < 0) Then
-                        If Updates_Critical = "True" Then
-                            Console.WriteLine("[AppService]Actualizacion critica")
-                            If Updates_CriticalMessage = "None" Then
-                            Else
-                                MsgBox(Updates_CriticalMessage, MsgBoxStyle.Information, "Worcome Security")
-                                AppUpdate.CheckUpdater()
-                                If My.Computer.FileSystem.FileExists(DIRCommons & "\Updater.exe") = True Then
-                                    MsgBox("Se iniciara un asistente de actualizacion", MsgBoxStyle.Information, "Worcome Security")
-                                    Process.Start(DIRCommons & "\Updater.exe", "/SearchForUpdates -" & AssemblyNameThis & " -" & AssemblyVersionThis & " -" & Application.ExecutablePath)
-                                Else
-                                    AppUpdate.ShowDialog()
-                                End If
-                            End If
-                            End 'END_PROGRAM
-                        Else
-                            If Updates_CriticalMessage = "None" Then
-                            Else
-                                MsgBox(Updates_CriticalMessage, MsgBoxStyle.Information, "Worcome Security")
-                            End If
-                            Console.WriteLine("[AppService]Hay una nueva version disponible")
-                            'MsgBox("Hay una Actualizacion Disponible", MsgBoxStyle.Information, "Worcome Security")
-                        End If
-                    Else
-                        Console.WriteLine("[AppService]La Aplicacion esta Actualizada")
-                    End If
-                End If
-                If Assembly_Status = "Enabled" Then
-                    Console.WriteLine("[AppService]Aplicacion en Estado Activa")
-                ElseIf Assembly_Status = "Disabled" Then
-                    MsgBox("Los servicios de esta aplicación fueron desactivados por Worcome", MsgBoxStyle.Exclamation, "Worcome Security")
-                    End 'END_PROGRAM
-                ElseIf Assembly_Status = "Waiting" Then
-                    MsgBox("Los servicios de esta aplicación están en espera...", MsgBoxStyle.Exclamation, "Worcome Security")
-                    End 'END_PROGRAM
-                ElseIf Assembly_Status = "Stopped" Then
-                    MsgBox("Los servicios de esta aplicación fueron detenidos por Worcome", MsgBoxStyle.Exclamation, "Worcome Security")
-                    End 'END_PROGRAM
-                Else
-                    Console.WriteLine("[AppService]Aplicacion en Estado Indefinida")
-                    If SecureMode_AAS = True Then
-                        Console.WriteLine("[AppService]Aplicacion en Estado Indefinida, Secure Mode esta Activado")
-                        MsgBox("La aplicación está en un estado indefinido" & vbCrLf & "Secure Mode está activo" & vbCrLf & "La aplicación se cerrará", MsgBoxStyle.Critical, "Worcome Security")
-                        End 'END_PROGRAM
-                    End If
-                End If
-            End If
-            AAP = True
-        Catch ex As Exception
-            Console.WriteLine("[AppService Status]Error: " & ex.Message)
-            If SecureMode_AAS = True Then
-                If My.Computer.Network.IsAvailable = False Then
-                    MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
-                Else
-                    MsgBox("No se pudo conectar a los Servidores de Servicios de Worcome", MsgBoxStyle.Critical, "Worcome Security")
-                End If
-                End 'END_PROGRAM
-            End If
-        End Try
-    End Sub
+    Public AppLanguage As SByte = 0 '0 = ENG | 1 = ESP
+    Public ReadOnly NullResponse As String = "None"
 
     <DllImport("kernel32")>
     Private Function GetPrivateProfileString(ByVal section As String, ByVal key As String, ByVal def As String, ByVal retVal As StringBuilder, ByVal size As Integer, ByVal filePath As String) As Integer
         'Use GetIniValue("KEY_HERE", "SubKEY_HERE", "filepath")
     End Function
-
     Public Function GetIniValue(section As String, key As String, filename As String, Optional defaultValue As String = Nothing) As String
         Dim sb As New StringBuilder(500)
         If GetPrivateProfileString(section, key, defaultValue, sb, sb.Capacity, filename) > 0 Then
@@ -420,13 +41,560 @@ Module AppService
         End If
     End Function
 End Module
-'Last update 23/10/2020 11:25 PM Chile by ElCris009
-'Last update 17/09/2020 04:21 PM Argentina by Juako
-'Last update 22/08/2020 06:56 PM Chile by ElCris009
-'Updated 30/05/2020 09:45 PM Chile by ElCris009
+Module AppService
+    Public SignRegistryStatus As Boolean
+    Public AppStatusStatus As Boolean
 
-'TO DO ?
-'   Si es una app con SecureMode o Online obligado entonces se debera esperar a que AppService se ejhecute x completo para poder mostrar la ventana principal del programa
-'   Archivos de memoria: Guarda la informacion general para cuando AppService es desactivado con el Modo Offline
-'       Guardar datos de ServerSwitch
-'       Guadar datos de la aplicacion para leerlos en caso de caida de servidores o modo offline
+    Public AppRegistry As RegistryKey
+    Public AppServiceConfig As RegistryKey
+    Public Reg_ShowAppServiceMessages As Boolean = True
+
+    Public OfflineApp As Boolean
+    Public SecureMode As Boolean
+
+    Public DIR_AppStatus As String
+    Public DIR_AppUpdate As String
+    Public DIR_AppHelper As String
+    Public DIR_AppLicenser As String
+    Public DIR_AppSupport As String
+    Public DIR_Telemetry As String
+
+    Sub CommonActions()
+        Try
+            'CREACION DE LA CARPETAS CARPETAS.
+            If My.Computer.FileSystem.DirectoryExists(DIRCommons) = False Then
+                My.Computer.FileSystem.CreateDirectory(DIRCommons)
+            End If
+            If My.Computer.FileSystem.DirectoryExists(DIRAppService) = False Then
+                My.Computer.FileSystem.CreateDirectory(DIRAppService)
+            End If
+            If My.Computer.FileSystem.DirectoryExists(DIRServerSwitch) = False Then
+                My.Computer.FileSystem.CreateDirectory(DIRServerSwitch)
+            End If
+        Catch ex As Exception
+            Console.WriteLine("[CommonActions@AppService]Error: " & ex.Message)
+            AppSupport.AddToLog("CommonActions(0)@AppService", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'ELIMINACION DE ARCHIVOS.
+            If My.Computer.FileSystem.FileExists(AppServiceFilePath) = True Then
+                My.Computer.FileSystem.DeleteFile(AppServiceFilePath)
+            End If
+            If My.Computer.FileSystem.FileExists(ServerSwitchFilePath) = True Then
+                My.Computer.FileSystem.DeleteFile(ServerSwitchFilePath)
+            End If
+            If My.Computer.FileSystem.FileExists(ServerConfigurationFilePath) = True Then
+                My.Computer.FileSystem.DeleteFile(ServerConfigurationFilePath)
+            End If
+        Catch ex As Exception
+            Console.WriteLine("[CommonActions@AppService]Error: " & ex.Message)
+            AppSupport.AddToLog("CommonActions(1)@AppService", "Error: " & ex.Message, True)
+        End Try
+    End Sub
+
+    'INICIO DE AppService, LLAMABLE DESDE CUALQUIER LUGAR.
+    Sub StartAppService(ByVal InitOffLineApp As Boolean,
+                        ByVal InitSecureMode As Boolean,
+                        ByVal InitSignRegistry As Boolean,
+                        ByVal InitAppStatus As Boolean,
+                        Optional ByVal InitAssemblyName As String = Nothing,
+                        Optional ByVal InitAssemblyVersion As String = Nothing)
+        AppSupport.AddToLog("AppService", "Started with" &
+                          vbCrLf & "    Offline Mode:   " & InitOffLineApp &
+                          vbCrLf & "    Secure Mode " & InitSecureMode &
+                          vbCrLf & "    SignRegistry " & InitSignRegistry &
+                          vbCrLf & "    AppStatus " & InitAppStatus &
+                          vbCrLf & "        AssemblyName " & InitAssemblyName &
+                          vbCrLf & "        AssemblyVersion " & InitAssemblyVersion, True)
+        'APLICACION DE LAS VARIABLES PARA USO GLOBAL.
+        OfflineApp = InitOffLineApp
+        SecureMode = InitSecureMode
+        SignRegistryStatus = InitSignRegistry
+        AppStatusStatus = InitAppStatus
+        'COMPROBACION DE SecureMODE
+        If SecureMode Then
+            If My.Computer.Network.IsAvailable = False Then
+                MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
+            End If
+            End 'END_PROGRAM
+        End If
+        Try
+            'APLICA EL IDIOMA A LA VARIABLE AppLanguague PARA PODER USADA A NIVEL GLOBAL.
+            Dim myCurrentLanguage As InputLanguage = InputLanguage.CurrentInputLanguage
+            If myCurrentLanguage.Culture.EnglishName.Contains("Spanish") Then
+                AppLanguage = 1
+            ElseIf myCurrentLanguage.Culture.EnglishName.Contains("English") Then
+                AppLanguage = 0
+            Else
+                AppLanguage = 0
+            End If
+        Catch ex As Exception
+            Console.WriteLine("[StartAppService(0)@AppService]Error: " & ex.Message)
+            AppSupport.AddToLog("StartAppService(0)@AppService", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'INDICA EL VALOR DE LAS VARIABLES This... PARA PODER USARLAS DE FORMA GLOBAL.
+            'ADEMAS ES UTIL PARA SOFTWARE COMO WorApps y WorInstaller.
+            '   ASI SE PUEDE OBTENER INFORMACION SOBRE ENSAMBLADOS QUE NO ES NECESARIAMENTE EL ACTUAL.
+            If InitAssemblyName IsNot Nothing And InitAssemblyVersion IsNot Nothing Then
+                ThisAssemblyName = InitAssemblyName
+                ThisAssemblyVersion = InitAssemblyVersion
+                ThisAssemblyProductName = InitAssemblyName.Replace("Wor", Nothing)
+            End If
+            AppServiceFilePath = DIRAppService & "\" & ThisAssemblyName & ".ini"
+            ServerSwitchFilePath = DIRServerSwitch & "\[" & ThisAssemblyName & "]WSS_ServerSwitch.ini"
+            ServerConfigurationFilePath = DIRServerSwitch & "\[" & ThisAssemblyName & "]WSS_Configuration.ini"
+        Catch ex As Exception
+            Console.WriteLine("[StartAppService(1)@AppService]Error: " & ex.Message)
+            AppSupport.AddToLog("StartAppService(1)@AppService", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'INDICA LOS VALORES PARA LAS LLAVES DE REGISTRO DE WINDOWS SOBRE LA APLICACION ACTUAL.
+            AppRegistry = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & ThisAssemblyName, True)
+            'CREACION DEL REGISTRO DE WINDOWS PARA LA CONFIGURACION DE AppService.
+            AppServiceConfig = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\AppService", True)
+            If AppServiceConfig Is Nothing Then
+                Registry.CurrentUser.CreateSubKey("Software\\Worcome_Studios\\AppService")
+                Dim Reg As RegistryKey = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\AppService", True)
+                Reg.SetValue("ShowMessages", "True", RegistryValueKind.String)
+            End If
+            Reg_ShowAppServiceMessages = Boolean.TryParse(AppServiceConfig.GetValue("ShowMessages"), True)
+        Catch ex As Exception
+            Console.WriteLine("[StartAppService(2)@AppService]Error: " & ex.Message)
+            AppSupport.AddToLog("StartAppService(2)@AppService", "Error: " & ex.Message, True)
+        End Try
+        CommonActions()
+        StartServerSwitch()
+    End Sub
+
+    Sub AppServiceEndingProcess()
+        Try
+            AppServiceConfig.SetValue("Working Server", SW_UsingServer, RegistryValueKind.String)
+            AppServiceSuccess = True
+        Catch
+        End Try
+        AppSupport.AddToLog("AppService", "Finished with" &
+                            vbCrLf & "  WorSupportIsActived: " & WorSupportIsActived &
+                            vbCrLf & "      AppServiceSuccess: " & AppServiceSuccess &
+                            vbCrLf & "      ServerSwitchSuccess: " & ServerSwitchSuccess &
+                            vbCrLf & "      SignRegistrySuccess: " & SignRegistrySuccess &
+                            vbCrLf & "      AppStatusSuccess: " & AppStatusSuccess, True)
+        'AL FINALIZAR TODO AppService, ENTONCES ESTE METODO SERA LLAMADO
+        If WorSupport.AppServiceSuccess = False Or WorSupport.ServerSwitchSuccess = False Or WorSupport.SignRegistrySuccess = False Or WorSupport.AppStatusSuccess = False Then
+            'SI NO ES EXITOSO.
+
+
+        End If
+
+
+    End Sub
+End Module
+Module ServerSwitch
+    'Se podrian dar mas items a esta lista a traves de dropbox u otro servidor
+    Public ReadOnly ServerSwitchURLs = {
+        "https://crz-labs.crizacio.com/WSS/WSS_MainServerSwitch.ini",
+        "http://worcomestudios.comule.com/WSS_Structure/WSS_MainServerSwitch.ini",
+        "http://worcomestudios.mywebcommunity.org/WSS_Structure/WSS_MainServerSwitch.ini",
+        "http://worcomecorporations.000webhostapp.com/Source/WSS/WSS_Structure/WSS_MainServerSwitch.ini"}
+    Public UsingServer As String = "WS0"
+
+    Dim ServerIndex As SByte = 0
+    Dim ServerTrying As SByte = 0
+
+    Dim WithEvents DownloaderArrayServerSwitch As New Net.WebClient
+    Dim WithEvents DownloaderArrayServerSwitchStructure As New Net.WebClient
+    Dim DownloadURIServerSwitch As Uri
+    Dim DownloadURIServerSwitchStructure As Uri
+
+    Dim ServerStatus As String
+    Dim IsStructureEnabled As Boolean
+    Dim StructureGuide As String
+    Dim SW_Working As Boolean
+    Public SW_UsingServer As String
+    Public SW_Structure As String
+
+    Sub StartServerSwitch() 'LLAMABLE POR MAS DE UNA VEZ.
+        Try
+            If OfflineApp = False Then
+                'OBTENER EL ARCHIVO ServerSwitch.
+                '   SI FALLA, ENTONCES SE VOLVERA AQUI Y SE INCREMENTARA EL SERVIDOR CON EL QUE SE DEBE INTENTAR.
+                ServerTrying = ServerTrying + 1
+                DownloadURIServerSwitch = New Uri(ServerSwitchURLs(ServerIndex))
+                DownloaderArrayServerSwitch.DownloadFileAsync(DownloadURIServerSwitch, ServerSwitchFilePath)
+            Else
+                Console.WriteLine("'AppService' Omitido")
+            End If
+        Catch ex As Exception
+            Console.WriteLine("[StartServerSwitch@ServerSwitch]Error: " & ex.Message)
+            AppSupport.AddToLog("StartServerSwitch@ServerSwitch", "Error: " & ex.Message, True)
+        End Try
+    End Sub
+
+    Private Sub DownloaderArrayServerSwitch_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles DownloaderArrayServerSwitch.DownloadFileCompleted
+        'AL DESCARGAR EL FICHERO, SE LLAMA AL METODO PARA PODER LEERLO.
+        ReadMainServerSwitchFile()
+    End Sub
+
+    Sub ReadMainServerSwitchFile()
+        Try
+            'LEE LOS VALORES DEL ARCHIVO Y LOS APLICA A SUS VARIABLES.
+            UsingServer = GetIniValue("WSS", "Server", ServerSwitchFilePath)
+            ServerStatus = GetIniValue("WSS", "Status", ServerSwitchFilePath)
+            IsStructureEnabled = Boolean.TryParse(GetIniValue("Structure", "Enabled", ServerSwitchFilePath), False)
+            StructureGuide = GetIniValue("Structure", "StructureFile", ServerSwitchFilePath)
+            SW_Working = Boolean.TryParse(GetIniValue("ServerSwitch", "Working", ServerSwitchFilePath), False)
+            SW_UsingServer = GetIniValue("ServerSwitch", "UsingServer", ServerSwitchFilePath)
+            SW_Structure = GetIniValue("ServerSwitch", "WSS_Structure", ServerSwitchFilePath)
+        Catch ex As Exception
+            Console.WriteLine("[ReadMainServerSwitchFile(0)@ServerSwitch]Error: " & ex.Message)
+            AppSupport.AddToLog("ReadMainServerSwitchFile(0)@ServerSwitch", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'SI ServerTrying >= 4 ENTONCES SE INTENTO DESCARGAR EL ARCHIVO Y NINGUN SERVIDOR RESPONDIO ADECUADAMENTE.
+            If ServerTrying >= 4 Then
+                AppSupport.AddToLog("ServerSwitch::AppService", "All servers failed!.", True)
+                AppServiceSuccess = False
+                ServerSwitchSuccess = False
+                SignRegistrySuccess = False
+                AppStatusSuccess = False
+                ServerTrying = 0
+                Exit Sub
+            Else
+                'SE VERIFICA QUE LAS VARIABLES UsingServer Y ServerStatus ESTEN HABITADAS. SI NO ENTONCES EL ARCHIVO ESTA VACIO, ESTO INDICA
+                ' QUE EL SERVIDOR ESTA CAIDO O NO HA RESPONDIDO CORRECTAMENTE.
+                If UsingServer = Nothing Or ServerStatus = Nothing Then
+                    If ServerIndex = 0 Then
+                        ServerIndex = 1
+                    ElseIf ServerIndex = 1 Then
+                        ServerIndex = 2
+                    ElseIf ServerIndex = 2 Then
+                        ServerIndex = 3
+                    ElseIf ServerIndex = 3 Then
+                        ServerIndex = 4
+                    End If
+                    'SE VE SI EL WebClient DownloaderArrayServerSwitch ESTA ANDANDO. SI ES ASI, SE DETIENE.
+                    If DownloaderArrayServerSwitch.IsBusy Then
+                        DownloaderArrayServerSwitch.Dispose()
+                        DownloaderArrayServerSwitch.CancelAsync()
+                    End If
+                    'SE INTENTA DESCARGAR EL ARCHIVO CON OTRO LINK DISPONIBLE.
+                    AppSupport.AddToLog("ServerSwitch::AppService", "ServerSwitch failed!. Trying with another server " & "(" & ServerIndex & ")", True)
+                    StartServerSwitch()
+                    Exit Sub
+                End If
+            End If
+            'EL ARCHIVO ESTA HABITADO, ESTO INDICA QUE EL SERVIDOR RESPONDE CORRECTAMENTE. ESE SERVIDOR SE UTILIZARA.
+            AppSupport.AddToLog("ServerSwitch::AppService", "Using Server: " & UsingServer, True)
+            'COMIENZA LA DESCARGA DEL SIGUIENTE ARCHIVO WSS_MainConfiguration.ini.
+            DownloadURIServerSwitchStructure = New Uri(StructureGuide)
+            DownloaderArrayServerSwitchStructure.DownloadFileAsync(DownloadURIServerSwitchStructure, ServerConfigurationFilePath)
+        Catch ex As Exception
+            Console.WriteLine("[ReadMainServerSwitchFile(1)@ServerSwitch]Error: " & ex.Message)
+            AppSupport.AddToLog("ReadMainServerSwitchFile(1)@ServerSwitch", "Error: " & ex.Message, True)
+            If SecureMode Then
+                If My.Computer.Network.IsAvailable Then
+                    MsgBox("No se logro conectar con los Servidores de Servicios de Worcome", MsgBoxStyle.Critical, "Worcome Security")
+                Else
+                    MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
+                End If
+                End 'END_PROGRAM
+            End If
+        End Try
+    End Sub
+
+    Private Sub DownloaderArrayServerSwitchStructure_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles DownloaderArrayServerSwitchStructure.DownloadFileCompleted
+        'AL DESCARGAR EL FICHERO, SE LLAMA AL METODO PARA PODER LEERLO.
+        ReadMainConfigurationFile()
+    End Sub
+
+    Sub ReadMainConfigurationFile()
+        Try
+            'DIR_AppService = GetIniValue("ServerSwitch", "DIR_AppService", ServerConfigurationFilePath)
+            'DIR_AppUpdate = GetIniValue("ServerSwitch", "DIR_AppUpdate", ServerConfigurationFilePath)
+            'DIR_AppHelper = GetIniValue("ServerSwitch", "DIR_AppHelper", ServerConfigurationFilePath)
+            'DIR_AppLicenser = GetIniValue("ServerSwitch", "DIR_AppLicenser", ServerConfigurationFilePath)
+            'DIR_AppSupport = GetIniValue("ServerSwitch", "DIR_AppSupport", ServerConfigurationFilePath)
+            'DIR_Telemetry = GetIniValue("ServerSwitch", "DIR_Telemetry", ServerConfigurationFilePath)
+
+            'SE AGREGAN LOS VALORES DE ARCHIVO A UNA LISTA.
+            Dim Analizer As New ArrayList
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_AppService", ServerConfigurationFilePath))
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_AppUpdate", ServerConfigurationFilePath))
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_AppHelper", ServerConfigurationFilePath))
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_AppLicenser", ServerConfigurationFilePath))
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_AppSupport", ServerConfigurationFilePath))
+            Analizer.Add(GetIniValue("ServerSwitch", "DIR_Telemetry", ServerConfigurationFilePath))
+            Dim it As SByte = 0
+            'SE REEMPLAZA EL '/' POR SW_UsingServer & SW_Structure & item
+            '   EJEMPLO = http://worcomestudios.comule.com/WSS_Structure/AppService
+            While it < Analizer.Count
+                Dim item As String = Analizer(it)
+                Dim finalVar As String
+                If item.StartsWith("/") Then
+                    finalVar = item.Replace("/", SW_UsingServer & SW_Structure & "/")
+                    Analizer(it) = finalVar
+                End If
+                it += 1
+            End While
+            'For Each item As String In Analizer
+
+            'Next
+            'SE APLICAN LOS VALORES MODIFICADOS A SUS RESPECTIVAS VARIABLES
+            DIR_AppStatus = Analizer(0)
+            DIR_AppUpdate = Analizer(1)
+            DIR_AppHelper = Analizer(2)
+            DIR_AppLicenser = Analizer(3)
+            DIR_AppSupport = Analizer(4)
+            DIR_Telemetry = Analizer(5)
+
+        Catch ex As Exception
+            Console.WriteLine("[ReadMainConfigurationFile@ServerSwitch]Error: " & ex.Message)
+            AppSupport.AddToLog("ReadMainConfigurationFile@ServerSwitch", "Error: " & ex.Message, True)
+        End Try
+        ServerSwitchEndingProcess()
+    End Sub
+
+    Sub ServerSwitchEndingProcess()
+        ServerSwitchSuccess = True
+        SignRegistryStep()
+    End Sub
+End Module
+Module SignRegistry
+    Dim ProcStatus_1 As Boolean = False
+    Dim ProcStatus_2 As Boolean = False
+    Dim ProcStatus_3 As Boolean = False
+    Dim ProcStatus_4 As Boolean = False
+
+    Public Reg_Assembly As String
+    Public Reg_Version As String
+    Public Reg_InstalledDate As String
+    Public Reg_LastStart As String
+    Public Reg_Directory As String
+    Public Reg_AllUsersCanUse As String
+
+    Sub SignRegistryStep()
+        If SignRegistryStatus Then
+            ProcStatus_1 = True
+            SignRegistryApplier()
+        Else
+            Console.WriteLine("[AppService]'SignRegistry' Omitido")
+            SignRegistryEndingProcess()
+        End If
+    End Sub
+
+    Sub SignRegistryApplier()
+        Try
+            'SE COMPRUEBA QUE SI NO HAY UNA LLAVE CREADA, ENTONCES ESTA SE CREA.
+            If AppRegistry Is Nothing Then
+                Registry.CurrentUser.CreateSubKey("Software\\Worcome_Studios\\" & ThisAssemblyName)
+                AppRegistry = Registry.CurrentUser.OpenSubKey("Software\\Worcome_Studios\\" & ThisAssemblyName, True)
+            End If
+            ProcStatus_2 = True
+        Catch ex As Exception
+            Console.WriteLine("[SignRegistryApplier(0)@SignRegistry]Error: " & ex.Message)
+            AppSupport.AddToLog("SignRegistryApplier(0)@SignRegistry", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'SE LEE EL REGISTRO Y SE APLICAN LOS VALORES EN SUS VARIABLES.
+            Reg_Assembly = AppRegistry.GetValue("Assembly")
+            Reg_Version = AppRegistry.GetValue("Version")
+            Reg_InstalledDate = AppRegistry.GetValue("Installed Date")
+            Reg_LastStart = AppRegistry.GetValue("Last Start")
+            Reg_Directory = AppRegistry.GetValue("Directory")
+            Try
+                'SI ES LA APLICACION ORIGINAL, ENTONCES PODRA HACER CAMBIOS.
+                'SI NO, ENTONCES SE TRATA DE UN "IMPOSTOR" (WorApps, WorInstaller y otros especificos)
+                If My.Application.Info.AssemblyName = ThisAssemblyName Then
+                    If Reg_Version = Nothing Then Reg_Version = My.Application.Info.Version.ToString
+                    Dim versionApp = New Version(ThisAssemblyVersion)
+                    Dim versionReg = New Version(Reg_Version)
+                    Dim result = versionApp.CompareTo(versionReg)
+                    If (result > 0) Then 'Sobre-actualizado App > Reg
+                        If Reg_ShowAppServiceMessages = True Then
+                            MsgBox("An inferior version was registered", MsgBoxStyle.Information, "Worcome Security")
+                        End If
+                    ElseIf (result < 0) Then 'Desactualizado App < Reg
+                        If Reg_ShowAppServiceMessages = True Then
+                            MsgBox("A higher version was registered", MsgBoxStyle.Information, "Worcome Security")
+                        End If
+                    End If
+                    AppRegistry.SetValue("Version", ThisAssemblyVersion, RegistryValueKind.String)
+                    AppRegistry.SetValue("Assembly Path", Application.ExecutablePath, RegistryValueKind.String)
+                    AppRegistry.SetValue("Last Start", DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt"), RegistryValueKind.String)
+                    AppRegistry.SetValue("Description", My.Application.Info.Description, RegistryValueKind.String)
+                    AppRegistry.SetValue("Compilated", Application.ProductVersion, RegistryValueKind.String)
+                End If
+                ProcStatus_3 = True
+            Catch ex As Exception
+                Console.WriteLine("[SignRegistryApplier(1)@SignRegistry]Error: " & ex.Message)
+                AppSupport.AddToLog("SignRegistryApplier(1)@SignRegistry", "Error: " & ex.Message, True)
+                If Reg_ShowAppServiceMessages = True Then
+                    MsgBox("The installation reg for this app could not be read", MsgBoxStyle.Critical, "Worcome Security")
+                End If
+            End Try
+            ProcStatus_4 = True
+        Catch ex As Exception
+            Console.WriteLine("[SignRegistryApplier(2)@SignRegistry]Error: " & ex.Message)
+            AppSupport.AddToLog("SignRegistryApplier(2)@SignRegistry", "Error: " & ex.Message, True)
+        End Try
+        If ProcStatus_1 And ProcStatus_2 And ProcStatus_3 And ProcStatus_4 Then
+            SignRegistrySuccess = True
+        End If
+        SignRegistryEndingProcess()
+    End Sub
+
+    Sub SignRegistryEndingProcess()
+        AppStatusStep()
+    End Sub
+End Module
+Module AppStatus
+    Dim ProcStatus_1 As Boolean = False
+    Dim ProcStatus_2 As Boolean = False
+    Dim ProcStatus_3 As Boolean = False
+
+    Dim WithEvents DownloaderArrayAppService As New Net.WebClient
+    Dim DownloadURIAppService As Uri
+
+    Public Assembly_Status As Boolean
+    Public Assembly_Name As String
+    Public Assembly_Version As String
+
+    Public Runtime_VisitURL As String
+    Public Runtime_Message As String
+    Public Runtime_ArgumentLine As String
+    Public Runtime_Command As String
+
+    Public Updates_Critical As Boolean
+    Public Updates_Message As String
+    Public Updates_CanUseOldVersion As Boolean
+
+    Public Installer_Status As Boolean
+    Public Installer_BinDownload As String
+    Public Installer_InsDownload As String
+    Public Installer_BitArch As String
+
+    Sub AppStatusStep()
+        Try
+            If AppStatusStatus Then
+                'COMIENZA LA DESCARGA DEL ARCHIVO WorAppName.ini
+                DownloadURIAppService = New Uri(DIR_AppStatus & "/" & ThisAssemblyName & ".ini")
+                DownloaderArrayAppService.DownloadFileAsync(DownloadURIAppService, AppServiceFilePath)
+                ProcStatus_1 = True
+            Else
+                Console.WriteLine("[AppService]'AppStatus' Omitido")
+                AppStatusEndingProcess()
+            End If
+        Catch ex As Exception
+            Console.WriteLine("[AppStatusStep@AppStatus]Error: " & ex.Message)
+            AppSupport.AddToLog("AppStatusStep@AppStatus", "Error: " & ex.Message, True)
+        End Try
+    End Sub
+
+    Private Sub DownloaderArrayAppService_DownloadFileCompleted(sender As Object, e As AsyncCompletedEventArgs) Handles DownloaderArrayAppService.DownloadFileCompleted
+        'AL DESCARGAR EL FICHERO, SE LLAMA AL METODO PARA PODER LEERLO.
+        ReadAppStatusFile()
+    End Sub
+
+    Sub ReadAppStatusFile()
+        Try
+            'LEER LOS VALORES DEL ARCHIVO Y APLICARLOS A LAS VARIABLES
+            Assembly_Status = Boolean.Parse(GetIniValue("Assembly", "Status", AppServiceFilePath))
+            Assembly_Name = GetIniValue("Assembly", "Name", AppServiceFilePath)
+            Assembly_Version = GetIniValue("Assembly", "Version", AppServiceFilePath)
+            Runtime_VisitURL = GetIniValue("Runtime", "VisitURL", AppServiceFilePath)
+            Runtime_Message = GetIniValue("Runtime", "Message", AppServiceFilePath)
+            Runtime_ArgumentLine = GetIniValue("Runtime", "ArgumentLine", AppServiceFilePath)
+            Runtime_Command = GetIniValue("Runtime", "Command", AppServiceFilePath)
+            Updates_Critical = Boolean.Parse(GetIniValue("Updates", "Critical", AppServiceFilePath))
+            Updates_Message = GetIniValue("Updates", "Message", AppServiceFilePath)
+            Updates_CanUseOldVersion = GetIniValue("Updates", "CanUseOldVersion", AppServiceFilePath)
+            Installer_Status = Boolean.Parse(GetIniValue("Installer", "Status", AppServiceFilePath))
+            Installer_BinDownload = GetIniValue("Installer", "BinDownload", AppServiceFilePath)
+            Installer_InsDownload = GetIniValue("Installer", "InsDownload", AppServiceFilePath)
+            Installer_BitArch = GetIniValue("Installer", "BitArch", AppServiceFilePath)
+            ProcStatus_2 = True
+        Catch ex As Exception
+            Console.WriteLine("[ReadAppStatusFile(0)@AppStatus]Error: " & ex.Message)
+            AppSupport.AddToLog("ReadAppStatusFile(0)@AppStatus", "Error: " & ex.Message, True)
+        End Try
+        Try
+            'INICIAR ACCIONES DEPENDIENDO DE ALGUNAS VARIABLES
+            If Assembly_Status Then
+                If Runtime_VisitURL <> NullResponse Then
+                    Process.Start(Runtime_VisitURL)
+                    Console.WriteLine("[AppStatus]Visitando URL: " & Runtime_VisitURL)
+                End If
+                If Runtime_Message <> NullResponse Then
+                    MsgBox(Runtime_Message, MsgBoxStyle.Information, "Worcome Security")
+                    Console.WriteLine("[AppStatus]Mostrando mensaje: " & Runtime_Message)
+                End If
+                If Runtime_ArgumentLine <> NullResponse Then
+                    Process.Start(DirAppPath, Runtime_ArgumentLine)
+                    Console.WriteLine("[AppStatus]Reiniciando con parametros: " & Runtime_ArgumentLine)
+                    End
+                End If
+                If Runtime_Command <> NullResponse Then
+                    Process.Start(Runtime_Command)
+                    Console.WriteLine("[AppStatus]Ejecutando comando: " & Runtime_Command)
+                End If
+                If Assembly_Version = "*.*.*.*" Then
+                    Console.WriteLine("[AppStatus]Comprobacion de version omitida.")
+                Else
+                    Dim versionLocal = New Version(ThisAssemblyVersion)
+                    Dim versionServidor = New Version(Assembly_Version)
+                    Dim result = versionLocal.CompareTo(versionServidor)
+                    If (result > 0) Then
+                        Console.WriteLine("[AppStatus]La version actual esta por sobre la del servidor.")
+                    ElseIf (result < 0) Then
+                        If Updates_Message <> NullResponse Then
+                            MsgBox(Updates_Message, MsgBoxStyle.Information, "Worcome Security")
+                        End If
+                        If Updates_Critical = True Then
+                            Console.WriteLine("[AppStatus]Actualizacion critica.")
+                            AppUpdate.CheckUpdater()
+                            If My.Computer.FileSystem.FileExists(DIRCommons & "\Updater.exe") = True Then
+                                MsgBox("Se iniciara un asistente de actualizacion", MsgBoxStyle.Information, "Worcome Security")
+                                Process.Start(DIRCommons & "\Updater.exe", "/SearchForUpdates -" & ThisAssemblyVersion & " -" & ThisAssemblyVersion & " -" & DirAppPath)
+                            Else
+                                AppUpdate.ShowDialog()
+                            End If
+                            If Updates_CanUseOldVersion = False Then
+                                End 'END_PROGRAM
+                            End If
+                        Else
+                            Console.WriteLine("[AppStatus]Una nueva version esta disponible.")
+                        End If
+                    Else
+                        Console.WriteLine("[AppStatus]Version actualizada.")
+                    End If
+                End If
+            Else
+                WorSupportIsActived = False
+                If SecureMode Then
+                    MsgBox("Este programa no esta habilitado para funcionar.", MsgBoxStyle.Critical, "Worcome Security")
+                    End 'END_PROGRAM
+                End If
+            End If
+            ProcStatus_3 = True
+        Catch ex As Exception
+            Console.WriteLine("[ReadAppStatusFile(1)@AppStatus]Error: " & ex.Message)
+            AppSupport.AddToLog("ReadAppStatusFile(1)@AppStatus", "Error: " & ex.Message, True)
+            If SecureMode Then
+                If My.Computer.Network.IsAvailable Then
+                    MsgBox("No se logro conectar con los Servidores de Servicios de Worcome", MsgBoxStyle.Critical, "Worcome Security")
+                Else
+                    MsgBox("Esta aplicación necesita acceso a internet para continuar", MsgBoxStyle.Critical, "Worcome Security")
+                End If
+                End 'END_PROGRAM
+            End If
+        End Try
+        If ProcStatus_1 And ProcStatus_2 And ProcStatus_3 Then
+            AppStatusSuccess = True
+        End If
+        AppStatusEndingProcess()
+    End Sub
+
+    Sub AppStatusEndingProcess()
+        AppServiceEndingProcess()
+    End Sub
+End Module

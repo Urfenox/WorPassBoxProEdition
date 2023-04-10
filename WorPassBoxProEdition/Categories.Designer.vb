@@ -23,60 +23,72 @@ Partial Class Categories
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Categories))
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.Button3 = New System.Windows.Forms.Button()
-        Me.ListBox1 = New System.Windows.Forms.ListBox()
+        Me.btnOpen = New System.Windows.Forms.Button()
+        Me.btnNew = New System.Windows.Forms.Button()
+        Me.btnRemove = New System.Windows.Forms.Button()
+        Me.lstCategory = New System.Windows.Forms.ListBox()
+        Me.btnSyncServer = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
-        'Button1
+        'btnOpen
         '
-        Me.Button1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button1.Location = New System.Drawing.Point(300, 12)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(84, 40)
-        Me.Button1.TabIndex = 1
-        Me.Button1.Text = "Abrir"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.btnOpen.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnOpen.Location = New System.Drawing.Point(300, 12)
+        Me.btnOpen.Name = "btnOpen"
+        Me.btnOpen.Size = New System.Drawing.Size(84, 40)
+        Me.btnOpen.TabIndex = 1
+        Me.btnOpen.Text = "Abrir"
+        Me.btnOpen.UseVisualStyleBackColor = True
         '
-        'Button2
+        'btnNew
         '
-        Me.Button2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button2.Location = New System.Drawing.Point(300, 58)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(84, 23)
-        Me.Button2.TabIndex = 2
-        Me.Button2.Text = "Nueva"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnNew.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnNew.Location = New System.Drawing.Point(300, 58)
+        Me.btnNew.Name = "btnNew"
+        Me.btnNew.Size = New System.Drawing.Size(84, 28)
+        Me.btnNew.TabIndex = 2
+        Me.btnNew.Text = "Nueva"
+        Me.btnNew.UseVisualStyleBackColor = True
         '
-        'Button3
+        'btnRemove
         '
-        Me.Button3.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button3.Location = New System.Drawing.Point(300, 123)
-        Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(84, 23)
-        Me.Button3.TabIndex = 3
-        Me.Button3.Text = "Remover"
-        Me.Button3.UseVisualStyleBackColor = True
+        Me.btnRemove.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnRemove.Location = New System.Drawing.Point(300, 123)
+        Me.btnRemove.Name = "btnRemove"
+        Me.btnRemove.Size = New System.Drawing.Size(84, 23)
+        Me.btnRemove.TabIndex = 3
+        Me.btnRemove.Text = "Remover"
+        Me.btnRemove.UseVisualStyleBackColor = True
         '
-        'ListBox1
+        'lstCategory
         '
-        Me.ListBox1.FormattingEnabled = True
-        Me.ListBox1.Items.AddRange(New Object() {"Default"})
-        Me.ListBox1.Location = New System.Drawing.Point(12, 12)
-        Me.ListBox1.Name = "ListBox1"
-        Me.ListBox1.Size = New System.Drawing.Size(282, 134)
-        Me.ListBox1.TabIndex = 0
+        Me.lstCategory.FormattingEnabled = True
+        Me.lstCategory.Items.AddRange(New Object() {"Default"})
+        Me.lstCategory.Location = New System.Drawing.Point(12, 12)
+        Me.lstCategory.Name = "lstCategory"
+        Me.lstCategory.Size = New System.Drawing.Size(282, 134)
+        Me.lstCategory.TabIndex = 0
+        '
+        'btnSyncServer
+        '
+        Me.btnSyncServer.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnSyncServer.Location = New System.Drawing.Point(300, 93)
+        Me.btnSyncServer.Name = "btnSyncServer"
+        Me.btnSyncServer.Size = New System.Drawing.Size(84, 22)
+        Me.btnSyncServer.TabIndex = 4
+        Me.btnSyncServer.Text = "Sync"
+        Me.btnSyncServer.UseVisualStyleBackColor = True
         '
         'Categories
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(396, 158)
-        Me.Controls.Add(Me.ListBox1)
-        Me.Controls.Add(Me.Button3)
-        Me.Controls.Add(Me.Button2)
-        Me.Controls.Add(Me.Button1)
+        Me.Controls.Add(Me.btnSyncServer)
+        Me.Controls.Add(Me.lstCategory)
+        Me.Controls.Add(Me.btnRemove)
+        Me.Controls.Add(Me.btnNew)
+        Me.Controls.Add(Me.btnOpen)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
@@ -87,8 +99,9 @@ Partial Class Categories
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents Button1 As Button
-    Friend WithEvents Button2 As Button
-    Friend WithEvents Button3 As Button
-    Friend WithEvents ListBox1 As ListBox
+    Friend WithEvents btnOpen As Button
+    Friend WithEvents btnNew As Button
+    Friend WithEvents btnRemove As Button
+    Friend WithEvents lstCategory As ListBox
+    Friend WithEvents btnSyncServer As Button
 End Class

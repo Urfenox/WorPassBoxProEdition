@@ -7,9 +7,13 @@
             Debugger.Close()
         End If
     End Sub
-
     Private Sub SignIn_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
 
+    End Sub
+    Private Sub SignIn_HelpRequested(sender As Object, hlpevent As HelpEventArgs) Handles Me.HelpRequested
+        AppAbout.SafeMode()
+        AppAbout.Show()
+        AppAbout.Focus()
     End Sub
 
     Private Sub IniciarSesion_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
@@ -19,17 +23,17 @@
     Sub IniciarSesion()
         Try
             If TresAgain >= 3 Then
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     MsgBox("Máximo de intentos alcanzados", MsgBoxStyle.Critical, "Worcome Security")
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     MsgBox("Maximum attempts reached", MsgBoxStyle.Critical, "Worcome Security")
                 End If
                 Debugger.Close()
             End If
             If TextBox1.Text = Nothing Or TextBox2.Text = Nothing Then
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     MsgBox("Rellene con la información solicitada", MsgBoxStyle.Critical, "Worcome Security")
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     MsgBox("Fill in the requested information", MsgBoxStyle.Critical, "Worcome Security")
                 End If
                 TresAgain = TresAgain + 1
@@ -39,9 +43,9 @@
                     Debugger.LoginPassed()
                 Else
                     TresAgain = TresAgain + 1
-                    If My.Settings.Espanglish = "ESP" Then
+                    If Debugger.Espanglish = "ESP" Then
                         MsgBox("Los datos no coinciden con el registro", MsgBoxStyle.Critical, "Worcome Security")
-                    ElseIf My.Settings.Espanglish = "ENG" Then
+                    ElseIf Debugger.Espanglish = "ENG" Then
                         MsgBox("The data does not match the record", MsgBoxStyle.Critical, "Worcome Security")
                     End If
                     TextBox1.Clear()
@@ -57,24 +61,25 @@
     Private Sub Label4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label4.Click
         If TextBox2.PasswordChar = "●" Then
             TextBox2.PasswordChar = ""
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label4.Text = "Ocultar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label4.Text = "Hide"
             End If
         Else
             TextBox2.PasswordChar = "●"
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 Label4.Text = "Mostrar"
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 Label4.Text = "Show"
             End If
         End If
     End Sub
 
     Private Sub Label6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        About.NotSafeMode()
-        About.Show()
+        AppAbout.SafeMode()
+        AppAbout.Show()
+        AppAbout.Focus()
     End Sub
 
     Private Sub TextBox1_KeyDown(sender As Object, e As KeyEventArgs) Handles TextBox1.KeyDown

@@ -10,9 +10,9 @@
         Try
             Data = Dato
             If Dato = Debugger.Login_Password Then
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     Label3.Text = "Ingrese su Contraseña"
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     Label3.Text = "Enter your Password"
                 End If
             End If
@@ -32,27 +32,27 @@
 
     Sub VerifyData()
         If TextBox1.Text = Nothing Then
-            If My.Settings.Espanglish = "ESP" Then
+            If Debugger.Espanglish = "ESP" Then
                 MsgBox("Rellene con la información solicitada", MsgBoxStyle.Critical, "Worcome Security")
-            ElseIf My.Settings.Espanglish = "ENG" Then
+            ElseIf Debugger.Espanglish = "ENG" Then
                 MsgBox("Fill in the requested information", MsgBoxStyle.Critical, "Worcome Security")
             End If
             TextBox1.Focus()
         Else
             If TextBox1.Text = Data Then
                 TextBox1.Clear()
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     Label3.Text = "Ingrese la información"
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     Label3.Text = "Enter the information"
                 End If
                 Me.DialogResult = DialogResult.OK
                 Me.Close()
             Else
                 TextBox1.Clear()
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     MsgBox("La información ingresada no coincide con el registro", MsgBoxStyle.Critical, "Worcome Security")
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     MsgBox("The information entered does not match the record", MsgBoxStyle.Critical, "Worcome Security")
                 End If
             End If

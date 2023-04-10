@@ -43,14 +43,14 @@
             End Try
             Try
                 My.Computer.FileSystem.CopyDirectory("C:\Users\" & System.Environment.UserName & "\PassBoxData", Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "\PassBoxAccounts")
-                If My.Settings.Espanglish = "ESP" Then
+                If Debugger.Espanglish = "ESP" Then
                     My.Computer.FileSystem.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "\PassBoxAccounts\Codigo_de_Acceso.txt", "Este archivo contiene el codigo de acceso para PassBox Pro Edition. Version: " & My.Application.Info.Version.ToString &
                                                         vbCrLf & "Su codigo de acceso es: " & CryptoActions.Encriptar(Debugger.Login_AccountsCryptoKey & ">" & Debugger.Login_CryptoKey, CryptoActions.DefaultCryptoKey) &
                                                         vbCrLf & "Se le pediran cuando vayas a restaurar la copia de seguridad." &
                                                         vbCrLf & "No compartas tu codigo de acceso con nadie." &
                                                         vbCrLf & vbCrLf & "Recomendamos eliminar este fichero cuando la copia de seguridad ya este aplicada.", False)
                     MsgBox("Copia de Seguridad creada correctamente en su Escritorio", MsgBoxStyle.Information, "Worcome Security")
-                ElseIf My.Settings.Espanglish = "ENG" Then
+                ElseIf Debugger.Espanglish = "ENG" Then
                     My.Computer.FileSystem.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.Desktop) & "\PassBoxAccounts\Access_Code.txt", "This file contains the Access Code of PassBox Pro Edition. Version: " & My.Application.Info.Version.ToString &
                                                         vbCrLf & "Your Access Code is: " & CryptoActions.Encriptar(Debugger.Login_AccountsCryptoKey & ">" & Debugger.Login_CryptoKey, CryptoActions.DefaultCryptoKey) &
                                                         vbCrLf & "You will be asked when you are going to restore the backup." &
@@ -128,9 +128,9 @@
                             If My.Computer.FileSystem.FileExists(PassBox.DIRCommons & "\Access_Code.txt") = True Then
                                 My.Computer.FileSystem.DeleteFile(PassBox.DIRCommons & "\Access_Code.txt")
                             End If
-                            If My.Settings.Espanglish = "ESP" Then
+                            If Debugger.Espanglish = "ESP" Then
                                 MsgBox("Copia de Seguridad leida Correctamente" & vbCrLf & "Vuelva a iniciar la Aplicacion", MsgBoxStyle.Information, "Worcome Security")
-                            ElseIf My.Settings.Espanglish = "ENG" Then
+                            ElseIf Debugger.Espanglish = "ENG" Then
                                 MsgBox("Securely Read Backup" & vbCrLf & "Restart the Application", MsgBoxStyle.Information, "Worcome Security")
                                 End If
                                 Debugger.Close()

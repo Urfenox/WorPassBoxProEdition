@@ -78,14 +78,16 @@
             Backup.Button1.Text = "Create a BackUp"
 
             'About Form
-            About.Label2.Text = "Account Protector"
-            About.Label3.Text = "World: Pass Box helps you not to forget your accounts, protects your accounts with an advanced security system to avoid the intruders." &
-                vbCrLf & vbCrLf & "Features:" &
-                vbCrLf & "     -CryptoActions: SistemTrail module that will be responsible for encrypting and decrypting your accounts." &
-                vbCrLf & "     -SignON: Register and Log in so that only you can see your accounts." &
-                vbCrLf & "     -BackUp: Read and create backups for when you change your version or computer."
-            About.LinkLabel1.Text = "Support"
-            About.Label6.Text = "*Community Standard: AppSupport was Natively Added for the Application"
+            'About.Label2.Text = "Account Protector"
+            'About.Label3.Text = "World: Pass Box helps you not to forget your accounts, protects your accounts with an advanced security system to avoid the intruders." &
+            '    vbCrLf & vbCrLf & "Features:" &
+            '    vbCrLf & "     -CryptoActions: SistemTrail module that will be responsible for encrypting and decrypting your accounts." &
+            '    vbCrLf & "     -SignON: Register and Log in so that only you can see your accounts." &
+            '    vbCrLf & "     -BackUp: Read and create backups for when you change your version or computer."
+            'About.LinkLabel1.Text = "Support"
+            'About.LinkLabel2.Text = "Use Guide"
+            'About.Label6.Text = "*Community Standard: AppSupport was Natively Added for the Application"
+            'About.CheckBox1.Text = "Offline Mode"
 
             'ActionConfirm Dialog
             ActionConfirm.Text = "Confirm"
@@ -95,9 +97,15 @@
 
             'Category Form
             Categories.Text = "Categories"
-            Categories.Button1.Text = "Open"
-            Categories.Button2.Text = "New"
-            Categories.Button3.Text = "Remove"
+            Categories.btnOpen.Text = "Open"
+            Categories.btnNew.Text = "New"
+            Categories.btnRemove.Text = "Remove"
+
+            'ServerSync
+            ServerSync.lblTitle.Text = "Synchronizing Accounts"
+            ServerSync.lblSelectedServer.Text = "Selected server"
+            ServerSync.btnGuardar.Text = "Save"
+            ServerSync.btnCargar.Text = "Load"
         End Sub
     End Class
 
@@ -179,13 +187,15 @@
             Backup.Button1.Text = "Crear Copia de Seguridad"
 
             'About Form
-            About.Label2.Text = "Protector de Cuentas"
-            About.Label3.Text = "Wor: PassBox te ayudara a no olvidar tus cuentas, protege tus cuentas con un avanzado sistema de seguridad para evitar a los instrusos." &
-                vbCrLf & vbCrLf & "Caracteristicas:" &
-                vbCrLf & "     -CryptoActions: Modulo de SistemTrail que se encargara de encriptar y desencriptar tus cuentas." &
-                vbCrLf & "     -SignON: Registrate e Inisia Sesion para que solo tu puedas ver tus cuentas." &
-                vbCrLf & "     -BackUp: Lee y Crea copias de seguridad para cuando cambies de version o de ordenador."
-            About.LinkLabel1.Text = "Soporte"
+            'About.Label2.Text = "Protector de Cuentas"
+            'About.Label3.Text = "Wor: PassBox te ayudara a no olvidar tus cuentas, protege tus cuentas con un avanzado sistema de seguridad para evitar a los instrusos." &
+            '    vbCrLf & vbCrLf & "Caracteristicas:" &
+            '    vbCrLf & "     -CryptoActions: Modulo de SistemTrail que se encargara de encriptar y desencriptar tus cuentas." &
+            '    vbCrLf & "     -SignON: Registrate e Inisia Sesion para que solo tu puedas ver tus cuentas." &
+            '    vbCrLf & "     -BackUp: Lee y Crea copias de seguridad para cuando cambies de version o de ordenador."
+            'About.LinkLabel1.Text = "Soporte"
+            'About.LinkLabel2.Text = "Guia de Uso"
+            'About.CheckBox1.Text = "Modo Offline"
 
             'ActionConfirm Dialog
             ActionConfirm.Text = "Confirmar"
@@ -195,9 +205,15 @@
 
             'Category Form
             Categories.Text = "Categorías"
-            Categories.Button1.Text = "Abrir"
-            Categories.Button2.Text = "Nueva"
-            Categories.Button3.Text = "Remover"
+            Categories.btnOpen.Text = "Abrir"
+            Categories.btnNew.Text = "Nueva"
+            Categories.btnRemove.Text = "Remover"
+
+            'ServerSync
+            ServerSync.lblTitle.Text = "Sincronización de Cuentas"
+            ServerSync.lblSelectedServer.Text = "Servidor seleccionado"
+            ServerSync.btnGuardar.Text = "Guardar"
+            ServerSync.btnCargar.Text = "Cargar"
         End Sub
     End Class
 
